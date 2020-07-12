@@ -1,0 +1,66 @@
+Scenario.name = emaucTest
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1
+Scenario.endTime = 1000
+Scenario.nrofHostGroups = 2
+
+
+
+emauc.type = EmaucScanInterface
+mauc.delta = 10
+mauc.movingThreshold = 1
+mauc.k = 2
+mauc.rssiThreshold = 60
+mauc.scanDuration = 2
+emauc.scanClock = 6
+
+#scanclock > scanDuration
+
+emauc.transmitSpeed = 250k
+emauc.transmitRange = 30
+
+
+Group.movementModel = RandomWaypoint
+
+Group.router = EpidemicRouter
+Group.bufferSize = 5M
+Group.nrofInterfaces = 1
+Group.interface1 = emauc
+Group.msgTtl = 300
+Group.groupID = moving
+Group.nrofHosts = 1
+
+Group.rechargeInterval = 2
+Group.initialEnergy = 15000.0,24413.0
+Group.rechargeEnergy = 24413
+Group.scanResponseEnergy = 0
+Group.transmitEnergy =  1.233
+Group.receveEnergy = 0.5466
+Group.scanEnergy = 0.5455
+Group.idleEnergy = 0.3515
+Group.sleepEnergy = 0.01825
+
+Group2.router = EpidemicRouter
+Group2.nrofInterfaces = 1
+Group2.interface1 = emauc
+Group2.msgTtl = 300
+Group2.groupID = static
+Group2.nrofHosts = 1
+Group2.movementModel = StationaryMovement
+Group2.nodeLocation = 50,50
+
+Group2.rechargeInterval = 2
+Group2.initialEnergy = 15000.0,24413.0
+Group2.rechargeEnergy = 24413
+Group2.scanResponseEnergy = 0
+Group2.transmitEnergy =  1.233
+Group2.receveEnergy = 0.5466
+Group2.scanEnergy = 0.5455
+Group2.idleEnergy = 0.3515
+Group2.sleepEnergy = 0.01825
+MovementModel.worldSize = 100,100
+
+
+Events.nrof = 0
+
+Report.nrofReports = 0

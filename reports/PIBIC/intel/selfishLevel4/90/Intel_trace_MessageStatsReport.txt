@@ -1,0 +1,20 @@
+Message stats for scenario Intel_trace
+sim_time: 359190.0000
+created: 299
+started: 564
+relayed: 478
+aborted: 86
+dropped: 0
+removed: 0
+delivered: 255
+delivery_prob: 0.8528
+response_prob: 0.0000
+overhead_ratio: 0.8745
+latency_avg: 96847.6275
+latency_med: 65541.0000
+hopcount_avg: 1.4157
+hopcount_med: 1
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

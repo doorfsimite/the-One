@@ -1,0 +1,20 @@
+Message stats for scenario Cambridge_trace
+sim_time: 987529.0000
+created: 822
+started: 3914
+relayed: 3255
+aborted: 659
+dropped: 0
+removed: 0
+delivered: 255
+delivery_prob: 0.3102
+response_prob: 0.0000
+overhead_ratio: 11.7647
+latency_avg: 147061.8784
+latency_med: 117900.0000
+hopcount_avg: 2.0588
+hopcount_med: 2
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

@@ -1,0 +1,11 @@
+Number of messages: 299
+Host  receved_Messages Transfered_Messages  receved_messages(destiny) direct_Delivery
+0 36 53 36 15
+1 249 175 26 123
+2 31 73 31 21
+3 30 54 30 12
+4 26 76 26 16
+5 32 59 32 8
+6 33 39 33 9
+7 242 102 42 63
+8 30 78 30 19

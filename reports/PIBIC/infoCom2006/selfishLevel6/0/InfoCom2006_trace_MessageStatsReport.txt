@@ -1,0 +1,20 @@
+Message stats for scenario InfoCom2006_trace
+sim_time: 337418.0000
+created: 281
+started: 27954
+relayed: 22094
+aborted: 5860
+dropped: 0
+removed: 0
+delivered: 224
+delivery_prob: 0.7972
+response_prob: 0.0000
+overhead_ratio: 97.6339
+latency_avg: 11455.4063
+latency_med: 4992.0000
+hopcount_avg: 5.3036
+hopcount_med: 5
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

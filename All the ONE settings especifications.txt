@@ -1,0 +1,244 @@
+#
+# All the ONE settings especifications
+#
+#================================================================================================================================
+
+## ----------------------------------------------------- SCENARIO SETTINGS ---------------------------------------------
+# name : scenario name
+# double endTime : end time (seconds)
+# double updateInterval : update interval (seconds) 
+# bool simulateConnections : simulate connections 
+# int nrofHostGroups : number of host groups
+# int nrofInterfaceTypes : number of interface types
+
+#Obs.: # 43200s == 12h
+
+#EXAMPLE
+
+#Scenario.name = scenario_name
+#Scenario.simulateConnections = true
+#Scenario.updateInterval = 1.0
+#Scenario.endTime = 5000
+#Scenario.nrofHostGroups = 1
+
+#//////////////////////////////////////////////////////SCENARIO USED\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Scenario.name = scenario
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1.0
+Scenario.endTime = 5000
+Scenario.nrofHostGroups = 1
+
+#================================================================================================================================
+
+#----------------------------------------------------- INTERFACE SETTINGS--------------------------------------------------------------------
+
+# interfaceName.type : which interface class the interface belongs to
+# interfaceName.transmitSpeed : transmit speed of the interface (bytes per second)
+# interfaceName.transmitRange : range of the interface (meters)
+# interfaceName.scanInterval : scanning interval
+
+##Obs.: Transmit speed of 2 Mbps = 250kBps
+
+#-----------------------SimpleBroadcastInterface--------------------------------------------------------------------------------------------- 
+#       interface que entrega mensagens sem considerar interferencia ou outras transmissoes
+
+#EXAMPLE
+
+# interfaceName.type = SimpleBroadcastInterface
+# interfaceName.transmitSpeed : 2M
+# interfaceName.transmitRange : 10
+# interfaceName.scanInterval : 5
+
+
+
+# ----------------------DistanceCapacityInterface--------------------------------------------------------------------------------------------
+#       interface que leva em consideração interferencia
+
+# interfaceName.transmitSpeeds : The first value is the speed at distance 0 and the following are speeds at equalsteps until the last one is the speed at the end of the transmit range. The speed between the stepsis linearly interpolated. 
+
+#EXAMPLE
+
+# interfaceName.type = DistanceCapacityInterface
+# interfaceName.transmitSpeeds = 1000,750,500,250,1
+# interfaceName.transmitSpeed = 1000
+# interfaceName.transmitRange = 100
+
+
+
+#------------------------InterferenceLimitedInterface----------------------------------------------------------------------------------------
+#       Interface que leva em consideração apenas as outras transmissoes simultaneas
+
+#EXAMPLE
+# interfaceName.type = InterferenceLimitedInterface
+# interfaceName.transmitSpeed = 30
+# interfaceName.transmitRange = 50
+
+#/////////////////////////////////////////////////////////INTERFACE USED\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#EXAMPLE
+
+btInterface.type = SimpleBroadcastInterface
+btInterface.transmitSpeed = 250k
+btInterface.transmitRange = 10
+
+#================================================================================================================================
+
+
+#---------------------------------------------------- GROUP SETTINGS---------------------------------------------------------------------
+
+# Group.groupID : Group's identifier. Used as the prefix of host names
+# Group.movementModel: movement model of the hosts (valid class name from movement package)
+# Group.router: router used to route messages (valid class name from routing package)
+# Group.nrofHosts: number of hosts in the group
+# Group.nrofInterfaces : number of interfaces in the group
+# Group.interface : interface name in the group
+# Group.application : application name in the group
+# Group.net.scanInterval : scanning interval for this group
+
+#-------Movement model of group settings-------------------------------------------------------------------------------------------------
+
+# Group.speed: minimum and maximum speeds (m/s) when moving on a path
+# Group.waitTime: minimum and maximum wait times (seconds) after reaching destination
+
+#-------Group Router settings------------------------------------------------------------------------------------------------------------
+
+# Group.bufferSize: Message buffer size -setting id ({@value}). Integer value in bytes.
+# Group.msgTtl : TTL (minutes) of the messages created by this host group, default=infinite
+# Group.sendQueue : This setting affects the order the messages and fragments are sent if the routing protocol doesn't define any particular order 
+
+#-------Group activeness Handler settings------------------------------------------------------------------------------------------------------
+
+# Group.activeTimes: Time intervals when the nodes in the group are active (start1, end1, start2, end2, ...)
+# Group.activePeriods : Defines the activity and inactivity periods. Example: 2000,500. Here node is periodically first active for 2000 seconds, followed by 500  seconds of inactiveness, and 2000 seconds of activeness, 500 seconds of inactiveness, etc.
+# Group.activePeriodsOffset :  Active periods offset -setting id ({@value}). Defines how much the activity periods are offset from sim time 0. Value X means that the first period has been on for X seconds at sim time 0. Default = 0 (i.e., first active period starts at 0) 
+
+#-------Group energy Model Settings-------------------------------------------------------------------------------------------------------
+Group.initialEnergy : Initial units of energy -setting id ({@value}). Can be either a  single value, or a range of two values. In the latter case, the used value is a uniformly distributed random value between the two values. */
+Group.scanEnergy : Energy usage per scanning (device discovery) -setting id ({@value}).
+Group.scanResponseEnergy : Energy usage per scanning (device discovery) response -setting id ({@value}).
+Group.transmitEnergy : Energy usage per second when sending -setting id ({@value}).
+Group.baseEnergy : Base energy usage per second.
+Group.energyWarmup : Energy update warmup period -setting id ({@value}). Defines the simulation time after which the energy level starts to decrease due to scanning, transmissions, etc. Default value = 0. If value of "-1" is defined, uses the value from the report warmup setting {@link report.Report#WARMUP_S} from the namespace {@value report.Report#REPORT_NS}.
+
+
+
+
+
+#////////////////////////////////////////////////////GROUP SETTINGS USED\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+Group.movementModel = RandomWaypoint
+Group.router = EpidemicRouter
+Group.bufferSize = 5M
+Group.nrofInterfaces = 1
+Group.interface1 = distanceInterface
+Group.speed = 0.5, 1.5
+Group.msgTtl = 300
+Group.nrofHosts = 5
+Group.groupID = n
+
+
+
+
+#========================================================================================================================================
+
+
+
+#--------------------------------------------------- MOVEMENT MODEL SETTINGS-------------------------------------------------------------
+
+# MovementModel.worldSize : world's size CSV (width, height)
+# MovementModel.rngSeed : movement models' rng seed (default = 0)
+
+
+#---------ExternalMovement--------------------------------------------------------------------------------------------------------------
+
+# ExternalMovement.file : external locations file's path
+# ExternalMovement.nrofPreload : number of preloaded intervals per preload run
+
+
+#////////////////////////////////////////////////////MOVEMENT MODEL USED\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+MovementModel.rngSeed = 1
+MovementModel.worldSize = 450, 340
+
+
+
+
+#========================================================================================================================================
+
+
+
+
+#----------------------------------------------------------EVENTS------------------------------------------------------------------------
+
+# Events.nrof : number of event queues
+# EventsN.class : name of the events class (for class based events)
+# EventsN.input : name of the package where event generator classes are looked from
+# EventsN.nrofPreload : number of events to preload from file
+# EventsN.filePath : path of external events file
+
+
+#-----------------MessageEventGenerator--------------------------------------------------------------------
+
+# EventN.size : Message size range -setting id ({@value}). Can be either a single value or a range (min, max) of uniformly distributed random values. Defines the message size (bytes).
+# EventN.interval : Message creation interval range -setting id ({@value}). Can be either a single value or a range (min, max) of uniformly distributed random values. Defines the inter-message creation interval (seconds).
+# EventN.hosts : Sender/receiver address range -setting id ({@value}). The lower bound is inclusive and upper bound exclusive.
+# EventN.tohosts : (Optional) receiver address range -setting id ({@value}). If a value for this setting is defined, the destination hosts are selected from this range and the source hosts from the {@link #HOST_RANGE_S} setting's range.   The lower bound is inclusive and upper bound exclusive.
+# EventN.prefix : Message ID prefix -setting id ({@value}). The value must be unique for all message sources, so if you have more than one message generator,use different prefix for all of them. The random number generator'sseed is derived from the prefix, so by changing the prefix, you'll getalso a new message sequence.
+# EventN.time : Message creation time range -setting id ({@value}). Defines the timerange when messages are created. No messages are created before the firstand after the second value. By default, messages are created for the whole simulation time.
+
+
+////////////////////////////////////////////////////////EVENTS USED\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Events.nrof = 1
+Events1.class = MessageEventGenerator
+
+Events1.size = 500k,1M
+Events1.interval = 25,35
+Events1.hosts = 0,5
+Events1.prefix = M
+
+
+
+
+#========================================================================================================================================
+
+
+
+## Reports - all report names have to be valid report classes
+# how many reports to load
+Report.nrofReports = 1
+Report.reportDir = reports/Test-5-nodes
+# Report classes to load
+Report.report1 = MessageStatsReport
+
+
+## Optimization settings -- these affect the speed of the simulation
+## see World class for details.
+Optimization.cellSizeMult = 5
+Optimization.randomizeUpdateOrder = true
+
+
+
+#========================================================================================================================================
+
+--------------------------------------------------------MESSAGE TRANSFER ACCEPT POLICY------------------------------------------------------
+
+mtaPolitcy.nrofMCBACs : Number of Module Communication Bus Conditions -setting id ({@value}). Two comma separated values. Defines the number of receiving and number of sending conditions to read from the settings.
+mtaPolitcy.MCBRcondition : Module Communication Bus Arithmetic Condition for Receiving -setting id  ({@value}). {@link ArithmeticCondition}. Defines one arithmetic condition to use for receiving messages.
+mtaPolitcy.MCBScondition : Module Communication Bus Arithmetic Condition for Sending -setting id ({@value}). {@link ArithmeticCondition}.
+mtaPolitcy.MCBRvalue : Module Communication Bus Condition Value for Receiving -setting id ({@value}). String. Defines the ID to use with the receiving condition.
+mtaPolitcy.MCBSvalue : Module Communication Bus Condition Value for Sending -setting id ({@value}). String. Defines the ID to use with the sending condition
+
+MCBSvalues :
+            Energy.value : identifier for the "current amount of energy left" variable. Value type: double
+            
+toReceivePolicy : Simple-policy accept-to -setting id ({@value}). Integer list. Defines the addresses of the hosts accepted as the destination of a message when receiving messages. Special value {@link #TO_ME_VALUE} refers to this host.
+fromReceivePolicy : Simple-policy accept-from -setting id ({@value}). Integer list. Defines the addresses of the hosts accepted as the source of a message when receiving messages. Special value {@link #TO_ME_VALUE} refers to this host.
+toSendPolicy : Simple-policy accept-to -setting id ({@value}). Integer list. Defines the addresses of the hosts accepted as the destination of a message when sending messages. Special value {@link #TO_ME_VALUE} refersto this host (but doesn't usually make much sense here).
+fromSendPolicy :  <P> Simple-policy accept-from -setting id ({@value}). Integer list. Defines the addresses of the hosts accepted as the source of a message when sending messages. Special value {@link #TO_ME_VALUE} refers to this host. </P><P> <B>Note:</B> if this setting is defined and the {@link #TO_ME_VALUE}is NOT listed, the hosts own messages are not sent anywhere. </P>*/	
+hopCountReceivePolicy : /** Hop count forwarding receive policy -setting id ({@value}).  {@link ArithmeticCondition}. Defines condition for the message hop count; if the condition does not match, the message is rejected, unless it is destined to this node. */
+hopCountSendPolicy :  Hop count forwarding send policy -setting id ({@value}).  {@link ArithmeticCondition}. Defines condition for the message hop count; if the condition does not match, the message is not offered to other nodes, unless it would be delivered to the final destination. */
+
+#========================================================================================================================================

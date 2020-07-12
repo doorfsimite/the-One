@@ -1,0 +1,68 @@
+Scenario.name = reality_trace
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1
+Scenario.endTime = 42259424
+Scenario.nrofHostGroups = 1
+
+
+btInterface.type = SimpleBroadcastInterface
+# Transmit speed of 2 Mbps = 250kBps
+btInterface.transmitSpeed = 250k
+# Range of transmission (in meter)
+btInterface.transmitRange = 10
+
+
+## Group-specific settings:
+# Common settings for all groups
+# Mobility model for all the nodes
+#Group.movementModel = ExternalMovement
+#ExternalMovement.file = ../pedsim/ecosystem/build-pedsim-Desktop_Qt_5_9_9_GCC_64bit-Debug/trace.txt
+
+
+
+# Routing protocol to be used by a node in the group
+Group.router = EpidemicRouter
+# Buffer size of any node
+#Group.bufferSize = 5G
+# All nodes have the bluectooth interface
+Group.nrofInterfaces = 1
+Group.interface1 = btInterface
+# Message TTL of 300 minutes (5 hours)
+#Group.msgTtl = 99999
+# Identifier for the nodes in this group
+Group.groupID = pessoa
+Group.nrofHosts = 83
+
+
+
+## Message creation parameters
+
+# How many event generators
+Events.nrof = 2
+# Class of the first event generator
+Events1.class = MessageEventGenerator
+# (Following settings are specific for the MessageEventGenerator class)
+# Creation interval in seconds (one new message every 25 to 35 seconds)
+Events1.interval = 3000,4500
+# Message sizes (500kB - 1MB)
+Events1.size = 500k,1M
+# Range of message source/destination addresses
+# Note: This shouldn’t be greater than # of nodes
+Events1.hosts = 0,82
+# Message ID prefix
+Events1.prefix = M
+
+
+
+Events2.class = ExternalEvents
+Events2.filePath = /home/simite/Documents/the-one-1.6.0/traces/reality/mit_one_reality.tsv
+
+## Reports - all report names have to be valid report classes
+# How many reports to load
+Report.nrofReports = 1
+# Directory where reports would be created
+Report.reportDir = reports/beta/intel/reports
+# Report classes to load
+Report.report1 = MessageStatsReport
+
+

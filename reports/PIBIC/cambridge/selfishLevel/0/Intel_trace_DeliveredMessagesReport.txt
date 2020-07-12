@@ -1,0 +1,10 @@
+# time  ID  size  hopcount  deliveryTime  fromHost  toHost  remainingTtl  isResponse  path
+1677.0000 M1 1000000 4 677.0000 IntelHost5 IntelHost4 n/a N IntelHost5->IntelHost6->IntelHost8->IntelHost2->IntelHost4
+2016.0000 M2 1000000 3 16.0000 IntelHost2 IntelHost4 n/a N IntelHost2->IntelHost6->IntelHost3->IntelHost4
+3004.0000 M3 1000000 1 4.0000 IntelHost2 IntelHost6 n/a N IntelHost2->IntelHost6
+4133.0000 M4 1000000 5 133.0000 IntelHost6 IntelHost0 n/a N IntelHost6->IntelHost3->IntelHost4->IntelHost5->IntelHost7->IntelHost0
+5013.0000 M5 1000000 2 13.0000 IntelHost2 IntelHost1 n/a N IntelHost2->IntelHost6->IntelHost1
+7198.0000 M7 1000000 1 198.0000 IntelHost5 IntelHost4 n/a N IntelHost5->IntelHost4
+7995.0000 M6 1000000 3 1995.0000 IntelHost4 IntelHost7 n/a N IntelHost4->IntelHost6->IntelHost0->IntelHost7
+8004.0000 M8 1000000 1 4.0000 IntelHost7 IntelHost0 n/a N IntelHost7->IntelHost0
+9004.0000 M9 1000000 1 4.0000 IntelHost3 IntelHost4 n/a N IntelHost3->IntelHost4

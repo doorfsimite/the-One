@@ -1,0 +1,117 @@
+## Scenario settings
+
+Scenario.name = Intel_trace
+Scenario.simulateConnections = false
+Scenario.updateInterval = 1
+#Scenario.endTime = 359190
+Scenario.endTime = 10000
+
+Scenario.nrofHostGroups = 1
+#Scenario.SelfishLevel = 90
+Scenario.selfishByBatteryLevel = 30
+
+
+# Network interface settings
+
+interfaceDeRede.type = SimpleBroadcastInterface
+interfaceDeRede.transmitSpeed = 250k
+interfaceDeRede.transmitRange = 10
+
+
+## Group-specific settings:
+
+MovementModel.worldSize = 1,1 
+Group.movementModel = StationaryMovement
+Group.nodeLocation = 0,0
+#buffer não especificado é definido para o maior possível
+#Group.bufferSize = 5G
+Group.nrofInterfaces = 1
+Group.interface1 = interfaceDeRede
+#TTL não especificado é definido para o maior possível (TTL = segundos)
+#Group.msgTtl = 3600
+Group.groupID = IntelHost
+Group.nrofHosts = 9
+Group.router = EpidemicRouter
+
+
+Group.initialEnergy = 5000
+Group.rechargeEnergy = 5000
+Group.rechargeInterval = 1000
+
+Group.scanEnergy = 0.92
+Group.scanResponseEnergy = 1e-16
+Group.transmitEnergy = 1
+Group.receveEnergy = 2
+
+#Group.scanEnergy = 0
+#Group.scanResponseEnergy = 0
+#Group.transmitEnergy = 0.08
+
+
+# Eventos
+
+Events.nrof = 2
+
+Events1.class = MessageEventGenerator
+Events1.interval = 10
+Events1.size = 1M,1500k
+# Range of message source/destination addresses
+Events1.hosts = 0,8
+Events1.prefix = M
+
+
+#Movimentação do trace
+
+Events2.class = ExternalEvents
+Events2.filePath = /home/simite/Documents/the-one-1.6.0/traces/imote/Intel/haggle-one-intel/haggle-one-intel.tsv
+
+
+
+#Optimization - Não exigir a ordem no update melhora o tempo de execução
+
+Optimization.randomizeUpdateOrder = true
+
+
+
+## Reports - all report names have to be valid report classes
+
+Report.nrofReports = 1
+Report.reportDir = reports/beta/intel/reports
+Report.hostSize = 9
+
+
+Report.report1 = SelfishBatteryReport
+#Report.report1 = SelfishReport
+
+
+#Report.report1 = TransferMessagesReport
+
+#Report.report1 = SelfishBatteryReport
+
+
+Report.report2 = MessageDeliveryReport
+Report.report3 = DeliveredMessagesReport
+
+#Report.report1 = MessageReport
+#Report.report3 = MessageStatsReport
+##Report.report5 = EnergyLevelReport
+#Report.granularity = 1
+
+
+
+
+
+#Report.report1 = TotalEncountersReport
+
+#Report.report1 = MessageDelayReport
+#Report.report1 = EventLogReport
+#Report.report1 = EncountersVSUniqueEncountersReport
+#Report.report1 = DistanceDelayReport
+#Report.report2 = AdjacencyGraphvizReport
+#Report.report3 = BufferOccupancyReport
+#Report.report4 = ConnectivityDtnsim2Report
+#Report.report5 = ConnectivityONEReport
+#Report.report6 = ContactsDuringAnICTReport
+#Report.report7 = ContactsPerHourReport
+#Report.report8 = ContactTimesReport
+#Report.report9 = CreatedMessagesReport

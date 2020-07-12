@@ -1,0 +1,585 @@
+Scenario.name = ufam_trace_50
+Scenario.simulateConnections = true
+Scenario.updateInterval = 60
+#86400 = 24 horas
+Scenario.endTime = 86400
+Scenario.nrofHostGroups = 60
+
+
+btInterface.type = SimpleBroadcastInterface
+btInterface.ufam = true
+btInterface.transmitSpeed = 250k
+btInterface.transmitRange = 10
+
+
+Group1.movementModel = ExternalMovementUFAM
+Group1.router = EpidemicRouter
+Group1.bufferSize = 5M
+Group1.groupID = FA01-
+Group1.nrofInterfaces = 1
+Group1.interface1 = btInterface
+Group1.msgTtl = 300
+Group1.nrofHosts = 232
+
+Group2.movementModel = ExternalMovementUFAM
+Group2.router = EpidemicRouter
+Group2.bufferSize = 5M
+Group2.groupID = FA02-
+Group2.nrofInterfaces = 1
+Group2.interface1 = btInterface
+Group2.msgTtl = 300
+Group2.nrofHosts = 255
+
+Group3.movementModel = ExternalMovementUFAM
+Group3.router = EpidemicRouter
+Group3.bufferSize = 5M
+Group3.groupID = FA03-
+Group3.nrofInterfaces = 1
+Group3.interface1 = btInterface
+Group3.msgTtl = 300
+Group3.nrofHosts = 115
+
+Group4.movementModel = ExternalMovementUFAM
+Group4.router = EpidemicRouter
+Group4.bufferSize = 5M
+Group4.groupID = FA04-
+Group4.nrofInterfaces = 1
+Group4.interface1 = btInterface
+Group4.msgTtl = 300
+Group4.nrofHosts = 132
+
+Group5.movementModel = ExternalMovementUFAM
+Group5.router = EpidemicRouter
+Group5.bufferSize = 5M
+Group5.groupID = FA05-
+Group5.nrofInterfaces = 1
+Group5.interface1 = btInterface
+Group5.msgTtl = 300
+Group5.nrofHosts = 108
+
+Group6.movementModel = ExternalMovementUFAM
+Group6.router = EpidemicRouter
+Group6.bufferSize = 5M
+Group6.groupID = FA06-
+Group6.nrofInterfaces = 1
+Group6.interface1 = btInterface
+Group6.msgTtl = 300
+Group6.nrofHosts = 99
+
+Group7.movementModel = ExternalMovementUFAM
+Group7.router = EpidemicRouter
+Group7.bufferSize = 5M
+Group7.groupID = FD01-
+Group7.nrofInterfaces = 1
+Group7.interface1 = btInterface
+Group7.msgTtl = 300
+Group7.nrofHosts = 158
+
+Group8.movementModel = ExternalMovementUFAM
+Group8.router = EpidemicRouter
+Group8.bufferSize = 5M
+Group8.groupID = FD02-
+Group8.nrofInterfaces = 1
+Group8.interface1 = btInterface
+Group8.msgTtl = 300
+Group8.nrofHosts = 163
+
+Group9.movementModel = ExternalMovementUFAM
+Group9.router = EpidemicRouter
+Group9.bufferSize = 5M
+Group9.groupID = FE02-
+Group9.nrofInterfaces = 1
+Group9.interface1 = btInterface
+Group9.msgTtl = 300
+Group9.nrofHosts = 194
+
+Group10.movementModel = ExternalMovementUFAM
+Group10.router = EpidemicRouter
+Group10.bufferSize = 5M
+Group10.groupID = FE03-
+Group10.nrofInterfaces = 1
+Group10.interface1 = btInterface
+Group10.msgTtl = 300
+Group10.nrofHosts = 179
+
+Group11.movementModel = ExternalMovementUFAM
+Group11.router = EpidemicRouter
+Group11.bufferSize = 5M
+Group11.groupID = FE06-FP-
+Group11.nrofInterfaces = 1
+Group11.interface1 = btInterface
+Group11.msgTtl = 300
+Group11.nrofHosts = 156
+
+Group12.movementModel = ExternalMovementUFAM
+Group12.router = EpidemicRouter
+Group12.bufferSize = 5M
+Group12.groupID = FT01-
+Group12.nrofInterfaces = 1
+Group12.interface1 = btInterface
+Group12.msgTtl = 300
+Group12.nrofHosts = 145
+
+Group13.movementModel = ExternalMovementUFAM
+Group13.router = EpidemicRouter
+Group13.bufferSize = 5M
+Group13.groupID = FT02-E-
+Group13.nrofInterfaces = 1
+Group13.interface1 = btInterface
+Group13.msgTtl = 300
+Group13.nrofHosts = 47
+
+Group14.movementModel = ExternalMovementUFAM
+Group14.router = EpidemicRouter
+Group14.bufferSize = 5M
+Group14.groupID = FT02-ET-
+Group14.nrofInterfaces = 1
+Group14.interface1 = btInterface
+Group14.msgTtl = 300
+Group14.nrofHosts = 44
+
+Group15.movementModel = ExternalMovementUFAM
+Group15.router = EpidemicRouter
+Group15.bufferSize = 5M
+Group15.groupID = FT02-T-
+Group15.nrofInterfaces = 1
+Group15.interface1 = btInterface
+Group15.msgTtl = 300
+Group15.nrofHosts = 46
+
+Group16.movementModel = ExternalMovementUFAM
+Group16.router = EpidemicRouter
+Group16.bufferSize = 5M
+Group16.groupID = FT05-
+Group16.nrofInterfaces = 1
+Group16.interface1 = btInterface
+Group16.msgTtl = 300
+Group16.nrofHosts = 124
+
+Group17.movementModel = ExternalMovementUFAM
+Group17.router = EpidemicRouter
+Group17.bufferSize = 5M
+Group17.groupID = FT06-
+Group17.nrofInterfaces = 1
+Group17.interface1 = btInterface
+Group17.msgTtl = 300
+Group17.nrofHosts = 126
+
+Group18.movementModel = ExternalMovementUFAM
+Group18.router = EpidemicRouter
+Group18.bufferSize = 5M
+Group18.groupID = FT07-
+Group18.nrofInterfaces = 1
+Group18.interface1 = btInterface
+Group18.msgTtl = 300
+Group18.nrofHosts = 107
+
+Group19.movementModel = ExternalMovementUFAM
+Group19.router = EpidemicRouter
+Group19.bufferSize = 5M
+Group19.groupID = FT08-
+Group19.nrofInterfaces = 1
+Group19.interface1 = btInterface
+Group19.msgTtl = 300
+Group19.nrofHosts = 91
+
+Group20.movementModel = ExternalMovementUFAM
+Group20.router = EpidemicRouter
+Group20.bufferSize = 5M
+Group20.groupID = FT09-
+Group20.nrofInterfaces = 1
+Group20.interface1 = btInterface
+Group20.msgTtl = 300
+Group20.nrofHosts = 107
+
+Group21.movementModel = ExternalMovementUFAM
+Group21.router = EpidemicRouter
+Group21.bufferSize = 5M
+Group21.groupID = FT10-
+Group21.nrofInterfaces = 1
+Group21.interface1 = btInterface
+Group21.msgTtl = 300
+Group21.nrofHosts = 128
+
+Group22.movementModel = ExternalMovementUFAM
+Group22.router = EpidemicRouter
+Group22.bufferSize = 5M
+Group22.groupID = FT11-
+Group22.nrofInterfaces = 1
+Group22.interface1 = btInterface
+Group22.msgTtl = 300
+Group22.nrofHosts = 101
+
+Group23.movementModel = ExternalMovementUFAM
+Group23.router = EpidemicRouter
+Group23.bufferSize = 5M
+Group23.groupID = FT12-
+Group23.nrofInterfaces = 1
+Group23.interface1 = btInterface
+Group23.msgTtl = 300
+Group23.nrofHosts = 128
+
+Group24.movementModel = ExternalMovementUFAM
+Group24.router = EpidemicRouter
+Group24.bufferSize = 5M
+Group24.groupID = IE01-
+Group24.nrofInterfaces = 1
+Group24.interface1 = btInterface
+Group24.msgTtl = 300
+Group24.nrofHosts = 77
+
+Group25.movementModel = ExternalMovementUFAM
+Group25.router = EpidemicRouter
+Group25.bufferSize = 5M
+Group25.groupID = IE02-
+Group25.nrofInterfaces = 1
+Group25.interface1 = btInterface
+Group25.msgTtl = 300
+Group25.nrofHosts = 81
+
+Group26.movementModel = ExternalMovementUFAM
+Group26.router = EpidemicRouter
+Group26.bufferSize = 5M
+Group26.groupID = IE03-B-
+Group26.nrofInterfaces = 1
+Group26.interface1 = btInterface
+Group26.msgTtl = 300
+Group26.nrofHosts = 11
+
+Group27.movementModel = ExternalMovementUFAM
+Group27.router = EpidemicRouter
+Group27.bufferSize = 5M
+Group27.groupID = IE03-L-
+Group27.nrofInterfaces = 1
+Group27.interface1 = btInterface
+Group27.msgTtl = 300
+Group27.nrofHosts = 89
+
+Group28.movementModel = ExternalMovementUFAM
+Group28.router = EpidemicRouter
+Group28.bufferSize = 5M
+Group28.groupID = IE07-
+Group28.nrofInterfaces = 1
+Group28.interface1 = btInterface
+Group28.msgTtl = 300
+Group28.nrofHosts = 108
+
+Group29.movementModel = ExternalMovementUFAM
+Group29.router = EpidemicRouter
+Group29.bufferSize = 5M
+Group29.groupID = IE08-
+Group29.nrofInterfaces = 1
+Group29.interface1 = btInterface
+Group29.msgTtl = 300
+Group29.nrofHosts = 131
+
+Group30.movementModel = ExternalMovementUFAM
+Group30.router = EpidemicRouter
+Group30.bufferSize = 5M
+Group30.groupID = IE09-
+Group30.nrofInterfaces = 1
+Group30.interface1 = btInterface
+Group30.msgTtl = 300
+Group30.nrofHosts = 137
+
+Group31.movementModel = ExternalMovementUFAM
+Group31.router = EpidemicRouter
+Group31.bufferSize = 5M
+Group31.groupID = IE10-
+Group31.nrofInterfaces = 1
+Group31.interface1 = btInterface
+Group31.msgTtl = 300
+Group31.nrofHosts = 93
+
+Group32.movementModel = ExternalMovementUFAM
+Group32.router = EpidemicRouter
+Group32.bufferSize = 5M
+Group32.groupID = IE11-
+Group32.nrofInterfaces = 1
+Group32.interface1 = btInterface
+Group32.msgTtl = 300
+Group32.nrofHosts = 69
+
+Group33.movementModel = ExternalMovementUFAM
+Group33.router = EpidemicRouter
+Group33.bufferSize = 5M
+Group33.groupID = IE12-
+Group33.nrofInterfaces = 1
+Group33.interface1 = btInterface
+Group33.msgTtl = 300
+Group33.nrofHosts = 11
+
+Group34.movementModel = ExternalMovementUFAM
+Group34.router = EpidemicRouter
+Group34.bufferSize = 5M
+Group34.groupID = IE13-
+Group34.nrofInterfaces = 1
+Group34.interface1 = btInterface
+Group34.msgTtl = 300
+Group34.nrofHosts = 93
+
+Group35.movementModel = ExternalMovementUFAM
+Group35.router = EpidemicRouter
+Group35.bufferSize = 5M
+Group35.groupID = IE14-
+Group35.nrofInterfaces = 1
+Group35.interface1 = btInterface
+Group35.msgTtl = 300
+Group35.nrofHosts = 57
+
+Group36.movementModel = ExternalMovementUFAM
+Group36.router = EpidemicRouter
+Group36.bufferSize = 5M
+Group36.groupID = IE16-
+Group36.nrofInterfaces = 1
+Group36.interface1 = btInterface
+Group36.msgTtl = 300
+Group36.nrofHosts = 42
+
+Group37.movementModel = ExternalMovementUFAM
+Group37.router = EpidemicRouter
+Group37.bufferSize = 5M
+Group37.groupID = IE17-
+Group37.nrofInterfaces = 1
+Group37.interface1 = btInterface
+Group37.msgTtl = 300
+Group37.nrofHosts = 97
+
+Group38.movementModel = ExternalMovementUFAM
+Group38.router = EpidemicRouter
+Group38.bufferSize = 5M
+Group38.groupID = IH01-
+Group38.nrofInterfaces = 1
+Group38.interface1 = btInterface
+Group38.msgTtl = 300
+Group38.nrofHosts = 115
+
+Group39.movementModel = ExternalMovementUFAM
+Group39.router = EpidemicRouter
+Group39.bufferSize = 5M
+Group39.groupID = IH06-
+Group39.nrofInterfaces = 1
+Group39.interface1 = btInterface
+Group39.msgTtl = 300
+Group39.nrofHosts = 103
+
+Group40.movementModel = ExternalMovementUFAM
+Group40.router = EpidemicRouter
+Group40.bufferSize = 5M
+Group40.groupID = IH07-B-
+Group40.nrofInterfaces = 1
+Group40.interface1 = btInterface
+Group40.msgTtl = 300
+Group40.nrofHosts = 33
+
+Group41.movementModel = ExternalMovementUFAM
+Group41.router = EpidemicRouter
+Group41.bufferSize = 5M
+Group41.groupID = IH07-L-
+Group41.nrofInterfaces = 1
+Group41.interface1 = btInterface
+Group41.msgTtl = 300
+Group41.nrofHosts = 72
+
+Group42.movementModel = ExternalMovementUFAM
+Group42.router = EpidemicRouter
+Group42.bufferSize = 5M
+Group42.groupID = IH08-
+Group42.nrofInterfaces = 1
+Group42.interface1 = btInterface
+Group42.msgTtl = 300
+Group42.nrofHosts = 110
+
+Group43.movementModel = ExternalMovementUFAM
+Group43.router = EpidemicRouter
+Group43.bufferSize = 5M
+Group43.groupID = IH10-
+Group43.nrofInterfaces = 1
+Group43.interface1 = btInterface
+Group43.msgTtl = 300
+Group43.nrofHosts = 99
+
+Group44.movementModel = ExternalMovementUFAM
+Group44.router = EpidemicRouter
+Group44.bufferSize = 5M
+Group44.groupID = IH12-
+Group44.nrofInterfaces = 1
+Group44.interface1 = btInterface
+Group44.msgTtl = 300
+Group44.nrofHosts = 68
+
+Group45.movementModel = ExternalMovementUFAM
+Group45.router = EpidemicRouter
+Group45.bufferSize = 5M
+Group45.groupID = IH13-
+Group45.nrofInterfaces = 1
+Group45.interface1 = btInterface
+Group45.msgTtl = 300
+Group45.nrofHosts = 128
+
+Group46.movementModel = ExternalMovementUFAM
+Group46.router = EpidemicRouter
+Group46.bufferSize = 5M
+Group46.groupID = IH14-
+Group46.nrofInterfaces = 1
+Group46.interface1 = btInterface
+Group46.msgTtl = 300
+Group46.nrofHosts = 101
+
+Group47.movementModel = ExternalMovementUFAM
+Group47.router = EpidemicRouter
+Group47.bufferSize = 5M
+Group47.groupID = IH15-
+Group47.nrofInterfaces = 1
+Group47.interface1 = btInterface
+Group47.msgTtl = 300
+Group47.nrofHosts = 95
+
+Group48.movementModel = ExternalMovementUFAM
+Group48.router = EpidemicRouter
+Group48.bufferSize = 5M
+Group48.groupID = IH16-
+Group48.nrofInterfaces = 1
+Group48.interface1 = btInterface
+Group48.msgTtl = 300
+Group48.nrofHosts = 39
+
+Group49.movementModel = ExternalMovementUFAM
+Group49.router = EpidemicRouter
+Group49.bufferSize = 5M
+Group49.groupID = IH19-
+Group49.nrofInterfaces = 1
+Group49.interface1 = btInterface
+Group49.msgTtl = 300
+Group49.nrofHosts = 29
+
+Group50.movementModel = ExternalMovementUFAM
+Group50.router = EpidemicRouter
+Group50.bufferSize = 5M
+Group50.groupID = IH20-
+Group50.nrofInterfaces = 1
+Group50.interface1 = btInterface
+Group50.msgTtl = 300
+Group50.nrofHosts = 117
+
+Group51.movementModel = ExternalMovementUFAM
+Group51.router = EpidemicRouter
+Group51.bufferSize = 5M
+Group51.groupID = IH21-
+Group51.nrofInterfaces = 1
+Group51.interface1 = btInterface
+Group51.msgTtl = 300
+Group51.nrofHosts = 45
+
+Group52.movementModel = ExternalMovementUFAM
+Group52.router = EpidemicRouter
+Group52.bufferSize = 5M
+Group52.groupID = IH22-
+Group52.nrofInterfaces = 1
+Group52.interface1 = btInterface
+Group52.msgTtl = 300
+Group52.nrofHosts = 82
+
+Group53.movementModel = ExternalMovementUFAM
+Group53.router = EpidemicRouter
+Group53.bufferSize = 5M
+Group53.groupID = IH23-
+Group53.nrofInterfaces = 1
+Group53.interface1 = btInterface
+Group53.msgTtl = 300
+Group53.nrofHosts = 140
+
+Group54.movementModel = ExternalMovementUFAM
+Group54.router = EpidemicRouter
+Group54.bufferSize = 5M
+Group54.groupID = IH25-
+Group54.nrofInterfaces = 1
+Group54.interface1 = btInterface
+Group54.msgTtl = 300
+Group54.nrofHosts = 81
+
+Group55.movementModel = ExternalMovementUFAM
+Group55.router = EpidemicRouter
+Group55.bufferSize = 5M
+Group55.groupID = IH26-
+Group55.nrofInterfaces = 1
+Group55.interface1 = btInterface
+Group55.msgTtl = 300
+Group55.nrofHosts = 81
+
+Group56.movementModel = ExternalMovementUFAM
+Group56.router = EpidemicRouter
+Group56.bufferSize = 5M
+Group56.groupID = IH27-
+Group56.nrofInterfaces = 1
+Group56.interface1 = btInterface
+Group56.msgTtl = 300
+Group56.nrofHosts = 75
+
+Group57.movementModel = ExternalMovementUFAM
+Group57.router = EpidemicRouter
+Group57.bufferSize = 5M
+Group57.groupID = IH28-
+Group57.nrofInterfaces = 1
+Group57.interface1 = btInterface
+Group57.msgTtl = 300
+Group57.nrofHosts = 73
+
+Group58.movementModel = ExternalMovementUFAM
+Group58.router = EpidemicRouter
+Group58.bufferSize = 5M
+Group58.groupID = IH29-
+Group58.nrofInterfaces = 1
+Group58.interface1 = btInterface
+Group58.msgTtl = 300
+Group58.nrofHosts = 72
+
+Group59.movementModel = ExternalMovementUFAM
+Group59.router = EpidemicRouter
+Group59.bufferSize = 5M
+Group59.groupID = IH30-
+Group59.nrofInterfaces = 1
+Group59.interface1 = btInterface
+Group59.msgTtl = 300
+Group59.nrofHosts = 51
+
+Group60.movementModel = ExternalMovementUFAM
+Group60.router = EpidemicRouter
+Group60.bufferSize = 5M
+Group60.groupID = IH31-
+Group60.nrofInterfaces = 1
+Group60.interface1 = btInterface
+Group60.msgTtl = 300
+Group60.nrofHosts = 45
+
+
+Events.nrof = 0
+
+
+
+
+ExternalMovementUFAM.nrofFiles = 60
+ExternalMovementUFAM.directory = /home/simite/Documents/the-one-1.6.0/traces/ufam_50/
+ExternalMovementUFAM.fileName = ufam
+
+
+MovementModel.worldSize = 2040,1850
+
+
+Report.nrofReports = 1
+Report.reportDir = /home/simite/Documents/the-one-1.6.0/traces/ufam_50/externalEventFormat
+Report.report1 = EventLogReport
+
+
+
+## GUI settings
+
+# GUI underlay image settings
+GUI.UnderlayImage.fileName = data/ufam/ufamPedsimCenario.png
+# Image offset in pixels (x, y)
+GUI.UnderlayImage.offset = -140, -55
+# Scaling factor for the image
+GUI.UnderlayImage.scale = 3
+
+
+GUI.UnderlayImage.rotate = 0

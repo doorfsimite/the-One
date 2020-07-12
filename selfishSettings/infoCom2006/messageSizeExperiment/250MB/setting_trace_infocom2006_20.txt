@@ -1,0 +1,140 @@
+
+Scenario.name = InfoCom2006_trace
+Scenario.simulateConnections = false
+Scenario.updateInterval = 1
+Scenario.endTime = 337418
+Scenario.nrofHostGroups = 1
+
+#337418 * 0.05 = 16870
+Report.occupancyInterval = 16870 
+
+
+Scenario.SelfishLevel = 20
+
+
+wifi.type = SimpleBroadcastInterface
+#Throughput usado 49 Mbps
+wifi.transmitSpeed = 6.125M
+wifi.transmitRange = 100
+
+#802.11b energy consumption [Quorum-Based Asynchronous Power-Saving Protocols for IEEE 802.11 Ad Hoc Networks]
+#tx = 1400 mw
+#rx = 950 mw
+#idle = 60mw (ignorada)
+#scan = 805 mw
+
+#Bluetooth energy consumption [On Power and Throughput Tradeoffs of WiFi and Bluetooth in Smartphones]
+# Samsung galaxy S II 
+# Off = 0 mW
+# Startup and initialization = 66 mW [Power Characterization of a Bluetooth-based Wireless Node for Ubiquitous Computing]
+# discoverable = 159 mW
+# non-Discoverable = 13 mW
+# scaning = 192 mW
+# Tx = 406.09 mW
+# Rx = 177.04 mW
+
+#802.11n Energy consumption [Power-Throughput Tradeoffs of 802.11n/ac in Smartphones]
+
+#Estado                 Custo (W)
+#Dormindo (Sleep)       0.01825
+#Ocioso (idle)          0.3515
+#Transmitindo (Tx)      1.233
+#Recebendo (Rx)         0.5466
+#Descobrimento (Scan)*  0.194 
+
+#Energia total          24413 J
+
+
+
+## Group-specific settings:
+
+MovementModel.worldSize = 1,1 
+Group.movementModel = StationaryMovement
+Group.nodeLocation = 0,0
+#buffer não especificado é definido para o maior possível
+Group.nrofInterfaces = 1
+Group.interface1 = wifi
+
+#TTL não especificado é definido para o maior possível (TTL = segundos)
+#Group.msgTtl = 3600
+
+Group.groupID = infoCom2006-Host
+Group.nrofHosts = 98
+Group.router = EpidemicRouter
+
+
+Group.initialEnergy = 15000.0,24413.0
+Group.rechargeEnergy = 24413
+
+Group.rechargeInterval = 2
+#A recarga precisa de 2 iterações para recarregar e registrar o tempo de descarregamento :P
+#Entretanto o relatorio gera o próximo segundo normalmente :D
+
+Group.scanResponseEnergy = 0
+Group.transmitEnergy =  1.233
+Group.receveEnergy = 0.5466
+#Group.scanEnergy = 0.194
+
+#obs.: Scan energy usado toda vez que não estiver em tx ou Rx, então e equivalente ao idle o tempo todo (usado so pro epidemic)
+Group.scanEnergy = 0.3515
+
+#Group.idleEnergy = 0.3515
+#Group.sleepEnergy = 0.01825
+
+
+
+# Eventos
+
+Events.nrof = 2
+
+Events1.class = MessageEventGenerator
+#1200sec = 20 min
+Events1.interval = 1200
+Events1.size = 250M
+# Range of message source/destination addresses
+Events1.hosts = 0,98
+Events1.prefix = M
+
+
+
+#Movimentação do trace
+Events2.class = ExternalEvents
+Events2.filePath = /home/simite/Documents/the-one-1.6.0/traces/imote/Exp6/haggle-one-infocom2006-complete/haggle-one-infocom2006-complete.tsv
+
+
+
+#Optimization - Não exigir a ordem no update melhora o tempo de execução
+Optimization.randomizeUpdateOrder = true
+
+
+
+## Reports - all report names have to be valid report classes
+
+Report.reportDir = /home/simite/Documents/the-one-1.6.0/reports/PIBIC/infoCom2006/messageSize/250MB/20
+Report.nrofReports = 7
+
+#Report.report1 = SelfishBatteryReport
+Report.report1 = SelfishReport
+Report.report2 = TransferMessagesReport
+Report.report3 = MessageReport
+Report.report4 = MessageStatsReport
+Report.report5 = TotalEncountersReport
+Report.report6 = BufferOccupancyReport
+Report.report7 = CreatedMessagesReport
+
+
+
+#Report.report3 = DeliveredMessagesReport
+#Report.report9 = ContactTimesReport
+#Report.report3 = MessageDeliveryReport
+#Report.report5 = EnergyLevelReport
+#Report.granularity = 1
+#Report.report1 = MessageDelayReport
+#Report.report1 = EventLogReport
+#Report.report1 = EncountersVSUniqueEncountersReport
+#Report.report1 = DistanceDelayReport
+#Report.report2 = AdjacencyGraphvizReport
+#Report.report4 = ConnectivityDtnsim2Report
+#Report.report5 = ConnectivityONEReport
+#Report.report6 = ContactsDuringAnICTReport
+#Report.report7 = ContactsPerHourReport
