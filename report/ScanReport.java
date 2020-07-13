@@ -123,47 +123,46 @@ public class ScanReport extends Report implements UpdateListener,ConnectionListe
 				EmaucScanInterface ei = (EmaucScanInterface) h.getInterface(1);
 				if(ei.isActive()) {
 					timeON.set(h.getAddress(), timeON.get(h.getAddress()) + 1);
-				}
-				if(ei.isMoving()) {//moving
-					movingTime.set(h.getAddress(), movingTime.get(h.getAddress()) + 1);
-					if(ei.isScanning()) {
-						
-						movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + scanEnergy);
-						movingScanTime.set(h.getAddress(), movingScanTime.get(h.getAddress()) + 1);
-						
-					}
-					else {
-						if(ei.getInterfaceState() == 1) {//idle NO CASO DO DESCOBRIMENTO EM MOVIMENTO O ESTADO IDLE NAO FUNCIONA
-							movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + idleEnergy);
-							movingIdleTime.set(h.getAddress(), movingIdleTime.get(h.getAddress()) + 1);
+	
+					if(ei.isMoving()) {//moving
+						movingTime.set(h.getAddress(), movingTime.get(h.getAddress()) + 1);
+						if(ei.isScanning()) {
+							
+							movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + scanEnergy);
+							movingScanTime.set(h.getAddress(), movingScanTime.get(h.getAddress()) + 1);
+							
 						}
-						else {//sleep
-							movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + sleepEnergy);
-							movingSleepTime.set(h.getAddress(), movingSleepTime.get(h.getAddress()) + 1);
+						else {
+							if(ei.getInterfaceState() == 1) {//idle NO CASO DO DESCOBRIMENTO EM MOVIMENTO O ESTADO IDLE NAO FUNCIONA
+								movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + idleEnergy);
+								movingIdleTime.set(h.getAddress(), movingIdleTime.get(h.getAddress()) + 1);
+							}
+							else {//sleep
+								movingEnergy.set(h.getAddress(), movingEnergy.get(h.getAddress()) + sleepEnergy);
+								movingSleepTime.set(h.getAddress(), movingSleepTime.get(h.getAddress()) + 1);
+							}
 						}
 					}
-				}
-				else {//static
-					staticTime.set(h.getAddress(), staticTime.get(h.getAddress()) + 1);
-					if(ei.isScanning()) {
-						staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + scanEnergy);						
-						staticScanTime.set(h.getAddress(), staticScanTime.get(h.getAddress()) + 1);
-					}
-					else {
-						//IDEALMENTE O IDLE DEVERIA ACONTECER POR 1 SEGUNDO MAS O ONE PRECISA DE 2 UPDATES PARA ALTERNAR O ESTADO
-						// DE TODAS AS INTERFACES. DAI, QUANDO ACONTECER DA INTERFACE ESTAR EM IDLE. A ENERGIA E O TEMPO DEVE SER A METADE.
-						// NESSE EXPERIMENTO O ESTADO IDLE É USADO APENAS POR NOS ESTATICOS E POR APENAS 2 SEGUNDOS.
-						//ENTAO DIVIDE POR 2 ENQUANTO N ESTA SE MOVENDO
-						if(ei.getInterfaceState() == 1) {//idle
-							staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + idleEnergy/2);
-							staticIdleTime.set(h.getAddress(), staticIdleTime.get(h.getAddress()) + 1/2);
-							//O RESTO DO TEMPO E ENERGIA É ADICIONADO AO ESTADO SLEEP
-							staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + sleepEnergy/2);
-							staticSleepTime.set(h.getAddress(), staticSleepTime.get(h.getAddress()) + 1/2);
+					else {//static
+						staticTime.set(h.getAddress(), staticTime.get(h.getAddress()) + 1);
+						if(ei.isScanning()) {
+							staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + scanEnergy);						
+							staticScanTime.set(h.getAddress(), staticScanTime.get(h.getAddress()) + 1);
 						}
-						else {//sleep
-							staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + sleepEnergy);
-							staticSleepTime.set(h.getAddress(), staticSleepTime.get(h.getAddress()) + 1);
+						else {
+							//IDEALMENTE O IDLE DEVERIA ACONTECER POR 1 SEGUNDO MAS O ONE PRECISA DE 2 UPDATES PARA ALTERNAR O ESTADO
+							// DE TODAS AS INTERFACES. DAI, QUANDO ACONTECER DA INTERFACE ESTAR EM IDLE. A ENERGIA E O TEMPO DEVE SER A METADE.
+							// NESSE EXPERIMENTO O ESTADO IDLE É USADO APENAS POR NOS ESTATICOS E POR APENAS 2 SEGUNDOS.
+							//ENTAO DIVIDE POR 2 ENQUANTO N ESTA SE MOVENDO
+							//MAS N FUNCIONOU, ENTAO FICOU POR 2 SEGUNDOS MESMO
+							if(ei.getInterfaceState() == 1) {//idle
+								staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + idleEnergy/2);
+								staticIdleTime.set(h.getAddress(), staticIdleTime.get(h.getAddress()) + 1);
+							}
+							else {//sleep
+								staticEnergy.set(h.getAddress(), staticEnergy.get(h.getAddress()) + sleepEnergy);
+								staticSleepTime.set(h.getAddress(), staticSleepTime.get(h.getAddress()) + 1);
+							}
 						}
 					}
 				}

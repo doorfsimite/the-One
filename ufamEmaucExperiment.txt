@@ -6,19 +6,22 @@ Scenario.nrofHostGroups = 60
 
 
 
-emauc.type = EmaucScanInterface
-mauc.delta = 15
-mauc.movingThreshold = 6.4
-#Precisa se mover 6 metros em 5 segundos
-mauc.k = 2
-mauc.rssiThreshold = 90
-mauc.scanDuration = 15
-emauc.scanClock = 15
-#scanclock > scanDuration
-emauc.transmitSpeed = 250k
-emauc.transmitRange = 30
+#emauc.type = EmaucScanInterface
+#mauc.delta = 60
+#//1 minuto
+#mauc.movingThreshold = 6.4
+##Precisa se mover 6 metros em 5 segundos
+#mauc.k = 2
+#mauc.rssiThreshold = 90
+#mauc.scanDuration = 15
+#emauc.scanClock = 60
+##scanclock > scanDuration
+#emauc.transmitSpeed = 250k
+#emauc.transmitRange = 30
 
-
+#scan sempre ligado:
+emauc.type = SimpleBroadcastInterface
+Network.scanInterval = 0
 
 Group1.movementModel = ExternalMovementUFAM
 Group1.router = EpidemicRouter
@@ -983,7 +986,7 @@ Group60.nrofHosts = 5
 
 
 ExternalMovementUFAM.nrofFiles = 60
-ExternalMovementUFAM.directory = /home/simite/Documents/the-one-1.6.0/traces/ufamOfical/
+ExternalMovementUFAM.directory = /home/simite/Documents/the-One/traces/ufamOfical/
 ExternalMovementUFAM.fileName = ufam
 
 
@@ -994,7 +997,8 @@ Events.nrof = 0
 Report.reportDir = reports/PIBIC/ufam/totalContacts/
 Report.nrofReports = 1
 Report.report1 = ScanReport
-Report.scanLog = /home/simite/Documents/the-one-1.6.0/reports/PIBIC/ufam/totalContacts/log.txt
+#Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/log.txt
+Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/logFullScan.txt
 
 ## GUI settings
 

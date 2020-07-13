@@ -2,25 +2,24 @@ import re
 import numpy as np
 from pylab import *
 
-#arq = open("/home/simite/Documents/the-one-1.6.0/reports/PIBIC/ufam/totalContacts/beta/limite_superior_de_contatos_UfamOficial_ConnectivityONEReport.txt","r")
-arq = open("/home/simite/Documents/the-one-1.6.0/reports/PIBIC/ufam/totalContacts/beta/plotagem.txt","r")
+#arq = open("/home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/beta/limite_superior_de_contatos_UfamOficial_ConnectivityONEReport.txt","r")
+arq = open("/home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/emaucTest_ScanReport.txt","r")
 
 
 menor = 0
 text = arq.readlines()
-connDurations = ((re.split(r', ',(text[0][1:-1]))))
-for i in range(0,len(connDurations)):
-    connDurations[i] = int(connDurations[i])
-    if(connDurations[i] <= 15):
-        menor = i
-
+connDurations = []
+textDurations = ((re.split(r', ',(text[0][1:-1]))))
+for i in range(0,len(textDurations)):
+    if(int(textDurations[i]) > 15):#contato válido (t > scanDuration))
+        connDurations.append(int(textDurations[i]) - 15)#duracao - scanDuration
+        if((int(textDurations[i]) - 15 )< 60):
+            menor +=1
 
 connDurations = np.array(connDurations)
-
-
+print(100*menor/len(connDurations))
 proportion = np.arange(len(connDurations)) / len(connDurations)
-print(proportion[menor])
-exit(0)
+
 plt.plot(connDurations,proportion)
 plt.show()
 
