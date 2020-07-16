@@ -292,7 +292,7 @@ public abstract class ActiveRouter extends MessageRouter {
 			return false; // message too big for the buffer
 		}
 			
-		int freeBuffer = this.getFreeBufferSize();
+		double freeBuffer = this.getFreeBufferSize();
 		/* delete messages from the buffer until there's enough space */
 		while (freeBuffer < size) {
 			Message m = getNextMessageToRemove(true); // don't remove msgs being sent

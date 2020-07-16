@@ -1,5 +1,5 @@
-Scenario.name = emaucTest
-Scenario.simulateConnections = true
+Scenario.name = UFAMFullScanEnergy
+Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 Scenario.endTime = 89820
 Scenario.nrofHostGroups = 60
@@ -21,7 +21,9 @@ Scenario.nrofHostGroups = 60
 
 #scan sempre ligado:
 emauc.type = SimpleBroadcastInterface
-Network.scanInterval = 0
+emauc.scanInterval = 0
+emauc.transmitSpeed = 250k
+emauc.transmitRange = 30
 
 Group1.movementModel = ExternalMovementUFAM
 Group1.router = EpidemicRouter
@@ -995,7 +997,7 @@ MovementModel.worldSize = 2040,1850
 
 Events.nrof = 0
 Report.reportDir = reports/PIBIC/ufam/totalContacts/
-Report.nrofReports = 1
+Report.nrofReports = 0
 Report.report1 = ScanReport
 #Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/log.txt
 Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/logFullScan.txt

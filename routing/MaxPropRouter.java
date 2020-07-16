@@ -395,9 +395,9 @@ public class MaxPropRouter extends ActiveRouter {
 	 */
 	public int calcThreshold() {
 		/* b, x and p refer to respective variables in the paper's equations */
-		int b = this.getBufferSize();
+		double b = this.getBufferSize();
 		int x = this.avgTransferredBytes;
-		int p;
+		double p;
 
 		if (x == 0) {
 			/* can't calc the threshold because there's no transfer data */

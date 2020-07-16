@@ -11,13 +11,14 @@ import java.util.List;
 import core.ConnectionListener;
 import core.DTNHost;
 import core.Message;
+import core.NetworkInterface;
 import interfaces.EmaucScanInterface;
 import core.Settings;
 import core.SimError;
 import core.UpdateListener;
 import input.StandardEventsReader;
 
-public class ScanReport extends Report implements UpdateListener,ConnectionListener{
+public class ScanReport extends Report implements UpdateListener/*,ConnectionListener*/{
 	static private Settings networkSettings;
 	
 	static ArrayList<Double> staticEnergy;
@@ -119,11 +120,19 @@ public class ScanReport extends Report implements UpdateListener,ConnectionListe
 				return; /* warmup period is on */
 			}		
 			
+			//MUDANCAS PARA USAR COM BROADCAST INTERFACE | apenas soma 1 quando esta ativo
 			for(DTNHost h : hosts) {
-				EmaucScanInterface ei = (EmaucScanInterface) h.getInterface(1);
+				//EmaucScanInterface ei = (EmaucScanInterface) h.getInterface(1);
+				NetworkInterface ei = h.getInterface(1);
+
 				if(ei.isActive()) {
 					timeON.set(h.getAddress(), timeON.get(h.getAddress()) + 1);
-	
+					//-------------------------------------------------------------------------------------
+					
+					}
+				}
+			}
+	/*/-------------------------------------------------------------------------------------
 					if(ei.isMoving()) {//moving
 						movingTime.set(h.getAddress(), movingTime.get(h.getAddress()) + 1);
 						if(ei.isScanning()) {
@@ -168,6 +177,7 @@ public class ScanReport extends Report implements UpdateListener,ConnectionListe
 				}
 			}
 		}
+		
 		public double discoveryEnergy(int address) {
 			double usedEnergy  =  (staticEnergy.get(address) + movingEnergy.get(address))- lastEnergyCheck.get(address);
 			lastEnergyCheck.set(address, (staticEnergy.get(address) + movingEnergy.get(address)));
@@ -185,13 +195,23 @@ public class ScanReport extends Report implements UpdateListener,ConnectionListe
 		public void hostsDisconnected(DTNHost host1, DTNHost host2) {
 			processEvent(host1, host2,StandardEventsReader.CONNECTION_DOWN);
 		}
-		
+		*/
 //		public void lastUpdated(List<DTNHost> hosts) {//falta adicionar o ultimo periodo sem descarregar}
 
 		@Override
 		public void done() {
 	
-			String header = "HOST   TimeON  | Moving: Time Energy ScanTime  idleTime sleepTime "+
+			//-------------------------------------------------------------------------------------
+			String header = "HOST   TimeON  ScanEnergy";
+			write(header);
+			
+			for(int i = 0; i < hostsSize ; i ++) {
+				String hostStatus = String.valueOf(i) +" "+timeON.get(i)+" "+timeON.get(i)*scanEnergy;
+				write(hostStatus);
+			}
+			/*/-------------------------------------------------------------------------------------
+			
+			/*String/ header = "HOST   TimeON  | Moving: Time Energy ScanTime  idleTime sleepTime "+
 										   "| Static: Time Energy ScanTime  idleTime sleepTime ";
 			write(header);			
 			for(int i = 0; i < this.hostsSize ; i ++) {
@@ -202,6 +222,7 @@ public class ScanReport extends Report implements UpdateListener,ConnectionListe
 										staticIdleTime.get(i)+" "+staticSleepTime.get(i);
 				write(hostStatus);
 			}
+			*/
 			log.close();
 			super.done();
 		}

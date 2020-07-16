@@ -99,7 +99,7 @@ public abstract class MessageRouter {
 	/** Host where this router belongs to */
 	private DTNHost host;
 	/** size of the buffer */
-	private int bufferSize;
+	private double bufferSize;
 	/** TTL for all messages */
 	protected int msgTtl;
 	/** Queue mode for sending messages */
@@ -115,12 +115,12 @@ public abstract class MessageRouter {
 	 * @param s The settings object
 	 */
 	public MessageRouter(Settings s) {
-		this.bufferSize = Integer.MAX_VALUE; // defaults to rather large buffer	
+		this.bufferSize = Double.MAX_VALUE; // defaults to rather large buffer	
 		this.msgTtl = Message.INFINITE_TTL;
 		this.applications = new HashMap<String, Collection<Application>>();
 		
 		if (s.contains(B_SIZE_S)) {
-			this.bufferSize = s.getInt(B_SIZE_S);
+			this.bufferSize = s.getDouble(B_SIZE_S);
 		}
 		if (s.contains(MSG_TTL_S)) {
 			this.msgTtl = s.getInt(MSG_TTL_S);
@@ -257,7 +257,7 @@ public abstract class MessageRouter {
 	 * Returns the size of the message buffer.
 	 * @return The size or Integer.MAX_VALUE if the size isn't defined.
 	 */
-	public int getBufferSize() {
+	public double getBufferSize() {
 		return this.bufferSize;
 	}
 	
@@ -268,11 +268,11 @@ public abstract class MessageRouter {
 	 * @return The amount of free space (Integer.MAX_VALUE if the buffer
 	 * size isn't defined)
 	 */
-	public int getFreeBufferSize() {
+	public double getFreeBufferSize() {
 		int occupancy = 0;
 		
-		if (this.getBufferSize() == Integer.MAX_VALUE) {
-			return Integer.MAX_VALUE;
+		if (this.getBufferSize() == Double.MAX_VALUE) {
+			return Double.MAX_VALUE;
 		}
 		
 		for (Message m : getMessageCollection()) {
