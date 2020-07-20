@@ -90,6 +90,10 @@ public abstract class ActiveRouter extends MessageRouter {
 		this.energy = (r.energy != null ? r.energy.replicate() : null);
 	}
 	
+	public void ConsumeEnergy (double energy) {
+		this.energy.reduceEnergy(energy);
+	}
+	
 	@Override
 	public void init(DTNHost host, List<MessageListener> mListeners) {
 		super.init(host, mListeners);

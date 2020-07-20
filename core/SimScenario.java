@@ -137,6 +137,8 @@ public class SimScenario implements Serializable {
 	private List<UpdateListener> updateListeners;
 	/** Global application event listeners */
 	private List<ApplicationListener> appListeners;
+	
+	private List<ActiveListener> acListener;
 
 	static {
 		DTNSim.registerForReset(SimScenario.class.getCanonicalName());
@@ -187,6 +189,7 @@ public class SimScenario implements Serializable {
 		this.movementListeners = new ArrayList<MovementListener>();
 		this.updateListeners = new ArrayList<UpdateListener>();
 		this.appListeners = new ArrayList<ApplicationListener>();
+		this.acListener = new ArrayList<ActiveListener>();
 		this.eqHandler = new EventQueueHandler();
 
 		/* TODO: check size from movement models */
@@ -331,6 +334,13 @@ public class SimScenario implements Serializable {
 		this.connectionListeners.add(cl);
 	}
 
+	public void addActiveListener(ActiveListener al) {
+		this.acListener.add(al);
+	}
+	
+	public List<ActiveListener> getActiveListeners() {
+		return this.acListener;
+	}
 	/**
 	 * Adds a new message listener for all nodes
 	 * @param ml The listener
@@ -415,6 +425,9 @@ public class SimScenario implements Serializable {
 					(NetworkInterface)intSettings.createIntializedObject(
 							INTTYPE_PACKAGE +intSettings.getSetting(INTTYPE_S));
 				iface.setClisteners(connectionListeners);
+				//-------------------------------------------------------
+				iface.setActiveListeners(acListener);
+				//-------------------------------------------------------
 				iface.setGroupSettings(s);
 				interfaces.add(iface);
 			}

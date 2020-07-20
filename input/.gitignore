@@ -24,3 +24,10 @@
 /StandardEventsReader.class
 /WKTMapReader.class
 /WKTReader.class
+/MulticastMessageEventGerenator.class
+/MulticastMessageEventGenerator.class
+/EnergyStandartEnergyReader.class
+/EnergyStandardEventsReader.class
+/ReduceEnergyEvent.class
+/MulticastMessageCreateEvent.class
+/ActiveEvent.class

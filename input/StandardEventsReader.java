@@ -64,6 +64,9 @@ public class StandardEventsReader implements ExternalEventsReader {
 	/** Message identifier to use to refer to all messages ({@value}) */ 
 	public static final String ALL_MESSAGES_ID = "*";
 	
+	public static final String ACTIVE = "ACTIVE";
+	public static final String DEACTIVE = "DEACTIVE";
+	
 	//private Scanner scanner;
 	private BufferedReader reader;
 	
@@ -133,6 +136,10 @@ public class StandardEventsReader implements ExternalEventsReader {
 					//--------------------------------------------------------
 					//String evento = (time +" "+ action +" "+ hostAddr +" "+ host2Addr +" "+ connEventType);
 					//System.out.println(evento);
+					
+					
+					double host1Energy = Double.valueOf(lineScan.next());
+					double host2Energy = Double.valueOf(lineScan.next());
 					//--------------------------------------------------------
 					
 					
@@ -155,8 +162,25 @@ public class StandardEventsReader implements ExternalEventsReader {
 					ConnectionEvent ce = new ConnectionEvent(hostAddr, 
 							host2Addr, interfaceId, isUp, time);
 					
+					ReduceEnergyEvent ree1 = new ReduceEnergyEvent(time,hostAddr,host1Energy);
+					ReduceEnergyEvent ree2 = new ReduceEnergyEvent(time,host2Addr,host2Energy);
+					
 					events.add(ce);
+					
+					events.add(ree1);
+					events.add(ree2);
 				}
+				else if (action.equals(ACTIVE)) {
+					hostAddr = getHostAddress(lineScan.next());
+					ActiveEvent ac = new ActiveEvent(time,hostAddr,true);
+					events.add(ac);
+				}
+				else if (action.equals(DEACTIVE)) {
+					hostAddr = getHostAddress(lineScan.next());
+					ActiveEvent ac = new ActiveEvent(time,hostAddr,false);
+					events.add(ac);
+				}
+				
 				else {
 					msgId = lineScan.next();
 					hostAddr = getHostAddress(lineScan.next());

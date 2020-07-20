@@ -7,6 +7,7 @@ package ui;
 import java.util.Vector;
 
 import report.Report;
+import core.ActiveListener;
 import core.ApplicationListener;
 import core.ConnectionListener;
 import core.MessageListener;
@@ -98,6 +99,7 @@ public abstract class DTNSimUI {
 				addReport((Report)settings.createObject(REPORT_PAC + 
 						reportClass));	
 			}
+			System.out.println("--"+scen.getActiveListeners().size());
 
 			double warmupTime = 0;
 			if (settings.contains(MM_WARMUP_S)) {
@@ -151,6 +153,9 @@ public abstract class DTNSimUI {
 		}
 		if (r instanceof ApplicationListener) {
 			scen.addApplicationListener((ApplicationListener)r);
+		}
+		if (r instanceof ActiveListener) {
+			scen.addActiveListener((ActiveListener)r);
 		}
 
 		this.reports.add(r);

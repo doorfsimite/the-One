@@ -8,6 +8,7 @@ import interfaces.ConnectivityGrid;
 import interfaces.ConnectivityOptimizer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -57,6 +58,8 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	protected String interfacetype;
 	protected List<Connection> connections; // connected hosts
 	private List<ConnectionListener> cListeners = null; // list of listeners
+	private List<ActiveListener> aListeners;
+	
 	private int address; // network interface address
 	protected double transmitRange;
 	protected double oldTransmitRange;
@@ -72,6 +75,8 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	private int activenessJitterMax;
 	/** this interface's activeness jitter value */
 	private int activenessJitterValue;
+	
+	public static List<DTNHost> activeNodes;
 
 	//---------------------ACTIVE OR DEACTIVE STATE------------------------------
 		
@@ -83,13 +88,36 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		//--------------------------------------------------------------------------------
 	private boolean egoist = false;
 	
+	private List<ActiveListener> activeListeners = null;
+	
 	public void activate() {
+		System.out.println(SimClock.getTime() + " " +this.host.getAddress()+ " activate");
+		activeNodes.add(this.host);
 		this.interfaceStatus = 1;
+		notifyActiveListeners(true);
 	}
 	public void deActivate() {
+		System.out.println(SimClock.getTime() + " " +this.host.getAddress()+ " deativate");
+		activeNodes.remove(this.host);
 		this.interfaceStatus = 0;
+		notifyActiveListeners(false);
 	}
 	
+	void notifyActiveListeners(boolean mode) {
+		if(this.activeListeners == null) {
+			return;
+		}
+		if(mode) {
+			for (ActiveListener al : this.activeListeners) {
+				al.active(host);
+			}			
+		}
+		else {
+			for (ActiveListener al : this.activeListeners) {
+				al.deactive(host);
+			}
+		}
+	}
 		//---------------------------IDLE or SLEEP--------------------------------------------------
 	public int intefaceState = 1;
 	/*1 idle
@@ -124,6 +152,8 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		this.transmitSpeed = s.getInt(TRANSMIT_SPEED_S);
 		ensurePositiveValue(transmitRange, TRANSMIT_RANGE_S);
 		ensurePositiveValue(transmitSpeed, TRANSMIT_SPEED_S);
+		
+		activeNodes = new LinkedList<DTNHost>();
 	}
 	
 	/**
@@ -148,6 +178,8 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		this.ah = ni.ah;
 		//--------------------------------------------------------------------
 		this.interfaceStatus = ni.interfaceStatus;
+		this.activeListeners = ni.activeListeners;
+
 		//--------------------------------------------------------------------
 
 		
@@ -255,6 +287,10 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	public void setClisteners(List<ConnectionListener> cListeners) {
 		this.cListeners = cListeners;
 	}
+	
+	public void setActiveListeners(List<ActiveListener> aListeners) {
+		this.activeListeners = aListeners;
+	}
 
 	/**
 	 * Returns the transmit range of this network layer
@@ -351,12 +387,6 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 			}
 		}
 		
-		
-		/*ADICIONAR AQUI A NOVA CONDICAO DE SCAN. LIGAR E DESLIGAR SE O DESLOCAMENTO FOR MAIOR QUE ALGUM VALOR*/
-		
-		
-		/* interval == 0 or still in the same scan round as when 
-		   last time asked */
 		return true;
 	}
 	
@@ -378,11 +408,9 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		for (Connection c: this.connections) {
 			if(c.isTransferring()) {
 				if(c.fromInterface == this) {
-					//System.out.println(c.toString());
 					return true;
 				}
 				else {
-					//System.out.println(c.toString());
 					return false;
 				}
 			}
@@ -395,11 +423,9 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		for (Connection c: this.connections) {
 			if(c.isTransferring()) {
 				if(c.toInterface == this) {
-					//System.out.println(c.toString());
 					return true;
 				}
 				else {
-					//System.out.println(c.toString());
 					return false;
 				}
 			}
@@ -429,6 +455,7 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	 * @param anotherInterface The interface to connect to
 	 */
 	protected void connect(Connection con, NetworkInterface anotherInterface) {
+		System.out.println(SimClock.getTime()+ " " + this.host.getAddress()+" - " + anotherInterface.getHost().getAddress() + " conected");
 		this.connections.add(con);
 		notifyConnectionListeners(CON_UP, anotherInterface.getHost());
 
@@ -520,6 +547,7 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 		if (this.cListeners == null) {
 			return;
 		}
+
 		for (ConnectionListener cl : this.cListeners) {
 			switch (type) {
 			case CON_UP:

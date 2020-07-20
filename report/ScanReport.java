@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.ActiveListener;
 import core.ConnectionListener;
 import core.DTNHost;
 import core.Message;
@@ -18,7 +19,7 @@ import core.SimError;
 import core.UpdateListener;
 import input.StandardEventsReader;
 
-public class ScanReport extends Report implements UpdateListener/*,ConnectionListener*/{
+public class ScanReport extends Report implements /*UpdateListener,/*ActiveListener,*/ConnectionListener{
 	static private Settings networkSettings;
 	
 	static ArrayList<Double> staticEnergy;
@@ -53,7 +54,8 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 		path = networkSettings.getSetting("scanLog");
 		String outFileName = networkSettings.valueFillString(path);
 		File outFile = new File(outFileName);
-		
+		System.out.println("comecou");
+			
 		
 		try {
 			log = new PrintWriter(new FileWriter(outFileName));
@@ -122,17 +124,17 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 			
 			//MUDANCAS PARA USAR COM BROADCAST INTERFACE | apenas soma 1 quando esta ativo
 			for(DTNHost h : hosts) {
-				//EmaucScanInterface ei = (EmaucScanInterface) h.getInterface(1);
-				NetworkInterface ei = h.getInterface(1);
+				EmaucScanInterface ei = (EmaucScanInterface) h.getInterface(1);
+				//NetworkInterface ei = h.getInterface(1);
 
 				if(ei.isActive()) {
 					timeON.set(h.getAddress(), timeON.get(h.getAddress()) + 1);
-					//-------------------------------------------------------------------------------------
+					/*/-------------------------------------------------------------------------------------
 					
 					}
 				}
 			}
-	/*/-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------*/
 					if(ei.isMoving()) {//moving
 						movingTime.set(h.getAddress(), movingTime.get(h.getAddress()) + 1);
 						if(ei.isScanning()) {
@@ -185,7 +187,9 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 		}
 		
 		private void processEvent(DTNHost host1,DTNHost host2,String extra) {
-			escrever(getSimTime() + " " + "CONN" + " " + host1.getAddress() +" " + host2.getAddress() +" " + extra + " " + discoveryEnergy(host1.getAddress()) + " " + discoveryEnergy(host2.getAddress()));
+			escrever(getSimTime() + " " + "CONN" + " " + host1.getAddress() +" " + host2.getAddress() +" " + extra);
+//			if(modo == 1) {escrever(getSimTime() + " " + "CONN" + " " + host1.getAddress() +" " + host2.getAddress() +" " + extra + " " + discoveryEnergy(host1.getAddress()) + " " + discoveryEnergy(host2.getAddress()));}
+//			else {	escrever(getSimTime() + " " + "ACTIVE" + " " + host1.getAddress() + " " + extra);}
 		}
 		
 		public void hostsConnected(DTNHost host1, DTNHost host2) {
@@ -195,13 +199,20 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 		public void hostsDisconnected(DTNHost host1, DTNHost host2) {
 			processEvent(host1, host2,StandardEventsReader.CONNECTION_DOWN);
 		}
-		*/
+		
+		/*public void active(DTNHost host) {
+			processEvent(2,host,host,"ON");
+		}
+		
+		public void deactive(DTNHost host){
+			processEvent(2,host,host,"OFF");
+		}
 //		public void lastUpdated(List<DTNHost> hosts) {//falta adicionar o ultimo periodo sem descarregar}
-
+*/
 		@Override
 		public void done() {
 	
-			//-------------------------------------------------------------------------------------
+			/*/-------------------------------------------------------------------------------------
 			String header = "HOST   TimeON  ScanEnergy";
 			write(header);
 			
@@ -209,9 +220,9 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 				String hostStatus = String.valueOf(i) +" "+timeON.get(i)+" "+timeON.get(i)*scanEnergy;
 				write(hostStatus);
 			}
-			/*/-------------------------------------------------------------------------------------
-			
-			/*String/ header = "HOST   TimeON  | Moving: Time Energy ScanTime  idleTime sleepTime "+
+			//-------------------------------------------------------------------------------------
+	*/		
+			String header = "HOST   TimeON  | Moving: Time Energy ScanTime  idleTime sleepTime "+
 										   "| Static: Time Energy ScanTime  idleTime sleepTime ";
 			write(header);			
 			for(int i = 0; i < this.hostsSize ; i ++) {
@@ -222,7 +233,7 @@ public class ScanReport extends Report implements UpdateListener/*,ConnectionLis
 										staticIdleTime.get(i)+" "+staticSleepTime.get(i);
 				write(hostStatus);
 			}
-			*/
+			
 			log.close();
 			super.done();
 		}

@@ -245,7 +245,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 	 * Does nothing if the warmup time has not passed.
 	 * @param amount The amount of energy to reduce
 	 */
-	protected void reduceEnergy(double amount) {
+	public void reduceEnergy(double amount) {
 		if (SimClock.getTime() < this.warmupTime) {
 			return;
 		}

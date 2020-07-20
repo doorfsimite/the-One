@@ -22,6 +22,8 @@ public class ExternalEventsQueue implements EventQueue {
 	/** path of external events file -setting id ({@value})*/
 	public static final String PATH_SETTING = "filePath";
 	
+	public static final String ENERGY_AWARE = "energyAware";
+	
 	/** default number of preloaded events */
 	public static final int DEFAULT_NROF_PRELOAD = 500;
 	

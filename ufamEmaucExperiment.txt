@@ -1,9 +1,10 @@
-Scenario.name = UFAMFullScanEnergy
-Scenario.simulateConnections = false
+Scenario.name = UFAM_active_Log
+Scenario.simulateConnections = true
 Scenario.updateInterval = 1
 Scenario.endTime = 89820
 Scenario.nrofHostGroups = 60
 
+ufam = true
 
 
 #emauc.type = EmaucScanInterface
@@ -996,12 +997,37 @@ MovementModel.worldSize = 2040,1850
 
 
 Events.nrof = 0
-Report.reportDir = reports/PIBIC/ufam/totalContacts/
-Report.nrofReports = 0
-Report.report1 = ScanReport
-#Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/log.txt
-Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/logFullScan.txt
 
+#Events1.class = ExternalEventsQueue
+#Events1.filePath = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/Active_Deactive/emauc/UFAM_EMAUC_LOG_ACTIVE_DEACTIVE_ActiveReport.txt
+
+#Events1.class = MulticastMessageEventGenerator
+#Events1.interval = 10
+#Events1.time = 3600,54000
+##entre 7 da manha e 21 horas
+#
+#Events1.size = 1M,1500k
+#
+## Range of message source/destination addresses
+#Events1.hosts = 0,8
+#Events1.prefix = M
+
+
+
+
+
+
+Report.reportDir = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/Active_Deactive/
+Report.nrofReports = 2
+Report.report1 = ActiveReport
+
+Report.report2 = ScanReport
+Report.scanLog = /home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/Active_Deactive/fullScan/fullScanContactsLog.txt
+
+
+
+
+#Report.report2 = EventLogReport
 ## GUI settings
 
 # GUI underlay image settings

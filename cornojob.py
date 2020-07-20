@@ -9,7 +9,8 @@ for i in range (1,61):
     text = ''
     grupo = "Group"+str(i)+"."
 
-    text += grupo+"movementModel = ExternalMovementUFAM\n"
+    text += grupo+"movementModel = StationaryMovement\n"
+    text += grupo+"nodeLocation = 0\n"
     text += grupo+"router = EpidemicRouter\n"
 #    text += grupo+"bufferSize = 5M\n"
     text += grupo+ "groupID = "+agents[i-1][1]+"-\n"
