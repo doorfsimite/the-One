@@ -5,6 +5,7 @@ agents = []
 for line in arq_agentes:
     agents.append(re.split(r' ',line))
 
+total = 0
 for i in range (1,61):
     text = ''
     grupo = "Group"+str(i)+"."
@@ -27,5 +28,6 @@ for i in range (1,61):
     text += grupo+"idleEnergy = 0.3515\n"
     text += grupo+"sleepEnergy = 0.01825\n"
     x =  int(int(agents[i-1][5])*0.05)+1
+    total += x
     text += grupo+"nrofHosts = "+str( x)+"\n"
-    print(text)
+print(total/60)

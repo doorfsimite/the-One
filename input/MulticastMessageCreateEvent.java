@@ -32,7 +32,6 @@ public class MulticastMessageCreateEvent extends  ExternalEvent{
 			DTNHost sortedFrom = NetworkInterface.activeNodes.get(rnd.nextInt(NetworkInterface.activeNodes.size()));//Qualquer no ativo 
 			return sortedFrom.getAddress();			
 		}
-
 		return -1;	
 	}
 	
@@ -62,15 +61,12 @@ public class MulticastMessageCreateEvent extends  ExternalEvent{
 	 * @param time Time, when the message is created
 	 */
 	
-	public MulticastMessageCreateEvent(Random random, ArrayList<Integer> destinyHosts, String id, int msgSize, int responseSize, double time) {
+	public MulticastMessageCreateEvent(ArrayList<Integer> destinyHosts, String id, int msgSize, int responseSize, double time) {
 		super(time);
 		if(toHosts == null) {
 			toHosts = destinyHosts;
-			rnd = random;
+			rnd = new Random();
 		}
-		System.out.println("Mensagem encomendada para :" +time);
-		Scanner myObj = new Scanner(System.in);
-		String stopstring = myObj.nextLine(); 
 		
 		this.size = msgSize;
 		this.responseSize = responseSize;
@@ -89,13 +85,13 @@ public class MulticastMessageCreateEvent extends  ExternalEvent{
 		if(fromAddress < 0 || toAddress < 0) {
 			return;
 		}else {
-		DTNHost to = world.getNodeByAddress(toAddress);
-		DTNHost from = world.getNodeByAddress(fromAddress);			
-		
-		Message m = new Message(from, to, this.id, this.size);
-		m.setResponseSize(this.responseSize);
-		from.createNewMessage(m);
-
+			DTNHost to = world.getNodeByAddress(toAddress);
+			DTNHost from = world.getNodeByAddress(fromAddress);			
+			
+			Message m = new Message(from, to, this.id, this.size);
+			m.setResponseSize(this.responseSize);
+			from.createNewMessage(m);
+	
 		}
 	}
 	

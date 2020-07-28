@@ -1,0 +1,143 @@
+Scenario.name = tftInterfaceTest
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1
+Scenario.endTime = 18
+Scenario.hosts = 2
+
+Scenario.nrofHostGroups = 2
+
+#Scenario.selfishByBatteryLevel = true
+#Scenario.selfishBatteryRandomSeed = seed
+
+#Scenario.selfishNodes = 0
+#Scenario.nrOfSelfishNodes = 1
+
+Scenario.SelfishNodeDenyMessages = false
+
+
+Energy.constantEnergyConsumption = 0
+#1,6875 * 0.3 = 0,50625
+
+
+
+tft.type = TitForTatInterface
+tft.transmitSpeed = 0.25M
+tft.transmitRange = 50
+tft.scanInterval = 0
+tft.hosts = 2
+tft.e = 3000
+#5*m.size()
+
+
+Group1.movementModel = StationaryMovement
+Group1.nodeLocation = 25,50
+Group1.router = DecisionEngineRouter
+Group1.groupID = A
+Group1.nrofInterfaces = 1
+Group1.interface1 = tft
+Group1.rechargeInterval = 2
+Group1.initialEnergy = 24413.0
+Group1.rechargeEnergy = 24413
+Group1.scanResponseEnergy = 0
+Group1.transmitEnergy =  1.233
+Group1.receveEnergy = 0.5466
+Group1.scanEnergy =  0
+Group1.idleEnergy = 0.3515
+Group1.sleepEnergy = 0.01825
+Group1.nrofHosts = 1
+
+Group2.movementModel = StationaryMovement
+Group2.nodeLocation = 75,50
+Group2.router = DecisionEngineRouter
+Group2.groupID = B
+Group2.nrofInterfaces = 1
+Group2.interface1 = tft
+Group2.rechargeInterval = 2
+Group2.initialEnergy = 24413.0
+Group2.rechargeEnergy = 24413
+Group2.scanResponseEnergy = 0
+Group2.transmitEnergy =  1.233
+Group2.receveEnergy = 0.5466
+Group2.scanEnergy =  0
+Group2.idleEnergy = 0.3515
+Group2.sleepEnergy = 0.01825
+Group2.nrofHosts = 1
+
+Group3.movementModel = StationaryMovement
+Group3.nodeLocation = 0,0
+Group3.router = EpidemicRouter
+Group3.groupID = C
+Group3.nrofInterfaces = 1
+Group3.interface1 = tft
+Group3.rechargeInterval = 2
+Group3.initialEnergy = 24413.0
+Group3.rechargeEnergy = 24413
+Group3.scanResponseEnergy = 0
+Group3.transmitEnergy =  1.233
+Group3.receveEnergy = 0.5466
+Group3.scanEnergy =  0
+Group3.idleEnergy = 0.3515
+Group3.sleepEnergy = 0.01825
+Group3.nrofHosts = 1
+
+MovementModel.worldSize = 100,100
+
+
+
+## PARA USAR O BUBBLE RAP
+#Group.router = DecisionEngineRouter
+DecisionEngineRouter.decisionEngine = community.DistributedBubbleRap
+DecisionEngineRouter.communityDetectAlg = routing.community.KCliqueCommunityDetection
+DecisionEngineRouter.K = 1
+
+#uma hora na sala (idealmente seria uma hora e meia mas ate isso acontecer a proxima aula ira acontece e essa comunidade n vai representar o no na proxima aula)
+DecisionEngineRouter.familiarThreshold = 1
+DecisionEngineRouter.centralityAlg = routing.community.SWindowCentrality
+
+
+# definir centralidade baseado em 2 horas
+DecisionEngineRouter.timeWindow = 7200
+
+
+Events.nrof = 1
+
+Events1.class = EnergyStandardEventsReader
+Events1.filePath =/home/simite/Documents/the-One/tftTestEvents.txt
+
+
+
+Events2.class = MulticastMessageEventGenerator
+Events2.interval = 1680
+#uma mensagem a cada hora
+Events2.time = 3600,54000
+#entre 8 da manha e 21 horas
+
+#tamanho varia do tamanho de mensagens de texto para videos
+#Events2.size = 100,20000000
+Events2.size = 20000000
+
+# Range of message source/destination addresses
+Events2.hosts = 0,625
+Events2.prefix = m
+Events2.multcastDestinyProportion = 5
+
+
+Report.nrofReports = 1
+Report.reportDir = /home/simite/Documents/the-One/tftTest
+#Report.report1 = CommunityDetectionReport
+#Report.report2 = MessageStatsReport
+Report.report1 = SelfishBatteryReport
+#Report.report3 = CreatedMessagesReport
+
+
+## GUI settings
+
+# GUI underlay image settings
+GUI.UnderlayImage.fileName = data/ufam/ufamPedsimCenario.png
+# Image offset in pixels (x, y)
+GUI.UnderlayImage.offset = -140, -55
+# Scaling factor for the image
+GUI.UnderlayImage.scale = 3
+
+
+GUI.UnderlayImage.rotate = 0

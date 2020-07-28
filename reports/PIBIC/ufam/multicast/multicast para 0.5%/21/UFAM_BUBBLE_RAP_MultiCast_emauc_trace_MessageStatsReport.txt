@@ -1,0 +1,20 @@
+Message stats for scenario UFAM_BUBBLE_RAP_MultiCast_emauc_trace
+sim_time: 89820.0000
+created: 21
+started: 7192
+relayed: 7187
+aborted: 3
+dropped: 0
+removed: 252
+delivered: 348
+delivery_prob: 16.5714
+response_prob: 0.0000
+overhead_ratio: 19.6523
+latency_avg: 10698.2529
+latency_med: 5885.0000
+hopcount_avg: 6.0661
+hopcount_med: 6
+buffertime_avg: 682.5159
+buffertime_med: 4.0000
+rtt_avg: NaN
+rtt_med: NaN

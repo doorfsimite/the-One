@@ -1,0 +1,20 @@
+Message stats for scenario UFAM_BubbleRap_TFT
+sim_time: 89820.0000
+created: 90
+started: 24509
+relayed: 24278
+aborted: 207
+dropped: 0
+removed: 632
+delivered: 1284
+delivery_prob: 14.2667
+response_prob: 0.0000
+overhead_ratio: 17.9081
+latency_avg: 13659.3217
+latency_med: 10099.0000
+hopcount_avg: 6.1417
+hopcount_med: 6
+buffertime_avg: 1458.8623
+buffertime_med: 45.0000
+rtt_avg: NaN
+rtt_med: NaN

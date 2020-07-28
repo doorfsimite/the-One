@@ -23,3 +23,5 @@
 /ProphetV2Router.class
 /SprayAndWaitRouter.class
 /WaveRouter.class
+/DecisionEngineRouter.class
+/RoutingDecisionEngine.class

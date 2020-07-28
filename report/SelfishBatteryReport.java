@@ -19,6 +19,7 @@ import core.Settings;
 import core.SimClock;
 import core.SimError;
 import core.SimScenario;
+import routing.ActiveRouter;
 import routing.MessageRouter;
 import routing.util.EnergyModel;
 import core.UpdateListener;
@@ -43,9 +44,10 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 	static ArrayList<LinkedList<Double>> consumoEmPeriodosNormais;
 	static ArrayList<LinkedList<Double>> consumoEmPeriodosEgoistas;
 
+
 	static LinkedList<Double> energiaRestante;
 	
-	static int bateryLevel;
+	static ArrayList<Integer> bateryLevel;
 	static int hostsSize = -1;
 	static private Settings settings;
 	static int initEnergy;
@@ -53,35 +55,41 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 	static int endTime;
 
 	
+	//refazendo
+	static ArrayList <Double> timeOn;
+	static ArrayList <Double>  normalConsume;
+	static ArrayList <Double>  selfishConsume;
+	static ArrayList <Double>  lastEnergyLevel;
+	static ArrayList <Double>  totalConsume;
+	static ArrayList <Double>  normalTime;
+	static ArrayList <Double>  selfishTime;
+
+	static ArrayList <Integer>  discharges;
+	
 	public SelfishBatteryReport() {
 		super.init();
+		
+		SimScenario scene = SimScenario.getInstance();
+		bateryLevel = new ArrayList<Integer>();
+		
+		List<DTNHost> hosts = scene.getHosts();
+		
+		for (DTNHost h : hosts) {
+			ActiveRouter ac = (ActiveRouter) h.getRouter();
+			bateryLevel.add(ac.getMinSelfishBatteryLevel());
+		}
+		
+		
 		
 		//Variaveis usadas
 		settings = getSettings();
 		settings.setNameSpace(core.SimScenario.SCENARIO_NS);
-		bateryLevel = settings.getInt(core.SimScenario.SELFISH_BY_BATTERY);
 		endTime = settings.getInt(core.SimScenario.END_TIME_S);
 
 		//Procura a energia inicial de algum grupo (ultimo setado para todos)
-		settings.setNameSpace(core.SimScenario.GROUP_NS);
-		try {
-			if(settings.contains(routing.util.EnergyModel.INIT_ENERGY_S)) {
-				initEnergy  = settings.getInt((routing.util.EnergyModel.INIT_ENERGY_S));
-			}
-			int groupNumber= 1;
-			while(true) {
-				settings.setNameSpace(core.SimScenario.GROUP_NS+String.valueOf(groupNumber));
-				if(settings.contains(routing.util.EnergyModel.INIT_ENERGY_S)) {
-					initEnergy = settings.getInt(routing.util.EnergyModel.INIT_ENERGY_S);					
-				}
-				else {
-					break;
-				}
-				
-			}
-		}catch (Exception e) {}
-
-
+		settings.setNameSpace(core.SimScenario.GROUP_NS+"1");
+		initEnergy  = settings.getInt((routing.util.EnergyModel.INIT_ENERGY_S));
+	
 
 		//java.util.Scanner myObj = new java.util.Scanner(System.in);
 		//String debug = myObj.nextLine();
@@ -107,6 +115,16 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 			consumoEmPeriodosNormais = new ArrayList<LinkedList<Double>>();
 			consumoEmPeriodosEgoistas =  new ArrayList<LinkedList<Double>>();
 			
+			//refazendo
+			timeOn = new ArrayList<Double>();
+			normalConsume = new ArrayList<Double>();
+			selfishConsume = new ArrayList<Double>();
+			totalConsume = new ArrayList<Double>();
+			normalTime = new ArrayList<Double>();
+			selfishTime = new ArrayList<Double>();
+			lastEnergyLevel= new ArrayList<Double>();
+			discharges= new ArrayList<Integer>();
+			
 			for(int i =0; i < hostsSize; i++) {
 				lastCheck.add(i,0.0);
 				lastEgoistCheck.add(false);
@@ -118,6 +136,16 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 				consumoEmPeriodosNormais.add(i,new LinkedList<Double>());
 				consumoEmPeriodosEgoistas.add(i,new LinkedList<Double>());
 				
+				
+				//refazendo
+				timeOn.add(0.0);
+				normalConsume.add(0.0);
+				selfishConsume.add(0.0);
+				totalConsume.add(0.0);
+				normalTime.add(0.0);
+				selfishTime.add(0.0);
+				lastEnergyLevel.add((double) initEnergy);
+				discharges.add(0);
 			}
 		}
 		
@@ -127,9 +155,40 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 		}		
 		
 		for(DTNHost h : hosts) {
-			Double value = (Double) h.getComBus().getProperty(routing.util.EnergyModel.ENERGY_VALUE_ID);
-			if(value == 0.0) { //Se nao tiver energia anota o primeiro tempo
-				if(lastCheck.get(h.getAddress()) != simTime - 1) {
+			Double currentEnergy = (Double) h.getComBus().getProperty(routing.util.EnergyModel.ENERGY_VALUE_ID);
+			if(h.getInterface(1).isActive()) {
+				timeOn.set(h.getAddress(),timeOn.get(h.getAddress()) + 1);
+				double usedEnergy = Math.abs(currentEnergy - lastEnergyLevel.get(h.getAddress()));
+			/*/	if(simTime % 1000 == 0) {
+					
+					System.out.println(simTime);
+					System.out.println(h.getAddress()  + " "+h.isEgoist()+" "+((double) h.getComBus().getProperty(routing.util.EnergyModel.ENERGY_VALUE_PERCENT)));
+					System.out.println(currentEnergy + " "+ lastEnergyLevel.get(h.getAddress())+" "+ usedEnergy +"\n");
+				
+					
+				//}
+*/
+				totalConsume.set(h.getAddress(),totalConsume.get(h.getAddress()) + usedEnergy);
+
+				
+				if(h.isEgoist()) {
+					selfishTime.set(h.getAddress(),selfishTime.get(h.getAddress()) + 1.0);
+					selfishConsume.set(h.getAddress(),selfishConsume.get(h.getAddress()) + usedEnergy);
+				}else {
+					normalTime.set(h.getAddress(),normalTime.get(h.getAddress()) + 1.0);
+					normalConsume.set(h.getAddress(),normalConsume.get(h.getAddress()) + usedEnergy);
+				}
+				
+				
+			}
+			if(currentEnergy == 0.0) { //Se nao tiver energia anota o primeiro tempo
+				discharges.set(h.getAddress(),discharges.get(h.getAddress()) + 1);
+			}
+			lastEnergyLevel.set(h.getAddress(), currentEnergy);
+		}
+
+		
+			/*if(lastCheck.get(h.getAddress()) != simTime - 1) {
 					tempoDeDescarregamento.get(h.getAddress()).add(new Tuple<Double,Double>(tempoDeInicioDeAtivação.get(h.getAddress()),simTime));
 					intervalosEgoistas.get(h.getAddress()).add(new Tuple<Double,Double>(tempoDeInicioDeEgoismo.get(h.getAddress()),simTime));
 					lastEgoistCheck.set(h.getAddress(),false);
@@ -152,9 +211,9 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 				usedEnergy.set(h.getAddress(),initEnergy - value);                                
 			}			
 		} 
-	
+	*/
 	}
-
+/*
 	public void lastUpdated(List<DTNHost> hosts) {//falta adicionar o ultimo periodo sem descarregar
 		double lastTime = getSimTime();
 		energiaRestante = new LinkedList<Double>();
@@ -164,6 +223,15 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 			energiaRestante.add(energiaRemanecente);
 			
 			double rechargeInterval = h.getRechargeInterval();
+			if( tempoDeDescarregamento.get(h.getAddress()).size() == 0) {
+				consumoEmPeriodosNormais.get(h.getAddress()).add( (double) ( -1*((bateryLevel.get(h.getAddress())/100)-1) )  * initEnergy);
+				if(h.isEgoist()) {
+					intervalosEgoistas.get(h.getAddress()).add(new Tuple<Double,Double>(tempoDeInicioDeEgoismo.get(h.getAddress()),lastTime));
+					consumoEmPeriodosEgoistas.get(h.getAddress()).offerLast(((-1*((bateryLevel.get(h.getAddress())/100)-1) )*initEnergy)-(initEnergy-energiaRemanecente));			
+				}
+				
+				continue;}
+			
 			double lastReportedInterval = tempoDeDescarregamento.get(h.getAddress()).getLast().getValue();
 			
 			
@@ -173,10 +241,10 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 				
 				if(h.isEgoist()) {
 					intervalosEgoistas.get(h.getAddress()).add(new Tuple<Double,Double>(tempoDeInicioDeEgoismo.get(h.getAddress()),lastTime));
-					consumoEmPeriodosNormais.get(h.getAddress()).add( (double) ( -1*((bateryLevel/100)-1) )  * initEnergy);
+					consumoEmPeriodosNormais.get(h.getAddress()).add( (double) ( -1*((bateryLevel.get(h.getAddress())/100)-1) )  * initEnergy);
 					
 					consumoEmPeriodosEgoistas.get(h.getAddress()).removeLast();
-					consumoEmPeriodosEgoistas.get(h.getAddress()).offerLast(((-1*((bateryLevel/100)-1) )*initEnergy)-(initEnergy-energiaRemanecente));
+					consumoEmPeriodosEgoistas.get(h.getAddress()).offerLast(((-1*((bateryLevel.get(h.getAddress())/100)-1) )*initEnergy)-(initEnergy-energiaRemanecente));
 					
 				}
 				else{
@@ -186,7 +254,7 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 			}
 		}
 	}
-
+*/
 	@Override
 	public void done() {
 		String header = "Selfish Battery Level: " + bateryLevel+ "\nHosts: "+ hostsSize;
@@ -217,99 +285,36 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 		double totalNormalConsume = 0;
 		double totalAllPeridosConsume = 0;
 
-				
+
+		
 		for(int i = 0; i < hostsSize ; i ++) {
 			hostsStatus = "";
-			if(tempoDeDescarregamento.get(i).getLast().getValue() == endTime) {
-				usedEnergy.set(i,(double)((tempoDeDescarregamento.get(i).size()-1) * initEnergy) + (initEnergy -energiaRestante.get(i)));
-			}
-			else {
-				usedEnergy.set(i,(double)(tempoDeDescarregamento.get(i).size() * initEnergy));
-			}
-			double egoistPeriodsSum = 0;
-			for(int t = 0; t <intervalosEgoistas.get(i).size(); t++){
-				egoistPeriodsSum += intervalosEgoistas.get(i).get(t).getValue() - intervalosEgoistas.get(i).get(t).getKey();
-			}
-			
-			double activePeriodsSum = 0;
-			for(int t = 0; t <tempoDeDescarregamento.get(i).size(); t++){
-				activePeriodsSum += tempoDeDescarregamento.get(i).get(t).getValue() - tempoDeDescarregamento.get(i).get(t).getKey();
-			}
+		
+			double egoistPeriodConsume = selfishConsume.get(i);
+			double normalPeriodConsume = normalConsume.get(i);
+			double allPeriodsConsume = totalConsume.get(i);
 
-			
-			double selfishCosume = 0;
-			for(int t = 0; t <consumoEmPeriodosEgoistas.get(i).size(); t++){
-				selfishCosume += consumoEmPeriodosEgoistas.get(i).get(t) ;
-			}
-
-			double egoistPeriodConsume = selfishCosume;
-			double normalPeriodConsume = usedEnergy.get(i) - selfishCosume;
-			double allPeriodsConsume = usedEnergy.get(i);
-
-			double meanEgoistPeriodConsume = egoistPeriodConsume /egoistPeriodsSum;
-			double meanNormalPeriodConsume = normalPeriodConsume/(activePeriodsSum - egoistPeriodsSum);
-			double meanAllPeriodsConsume = allPeriodsConsume/activePeriodsSum;
+			double meanEgoistPeriodConsume =  selfishTime.get(i) == 0.0 ? 0 : egoistPeriodConsume /selfishTime.get(i);
+			double meanNormalPeriodConsume = normalTime.get(i) == 0.0 ? 0 : normalPeriodConsume/normalTime.get(i);
+			double meanAllPeriodsConsume = timeOn.get(i) == 0.0 ? 0 : allPeriodsConsume/timeOn.get(i);
 			
 			
 			geralEgoistPeridConsume += egoistPeriodConsume;
 			geralNormalPeridConsume += normalPeriodConsume;
 			geralallPeriodsConsume += allPeriodsConsume;
 			
-			varGeralEgoistPeridConsume += egoistPeriodConsume;
-			varGeralNormalPeridConsume += normalPeriodConsume;
-			varGeralallPeriodsConsume += allPeriodsConsume;
-			
 			geralMeanEgoistPeriodConsume += meanEgoistPeriodConsume;
 			geralMeanNormalPeriodConsume += meanNormalPeriodConsume;
 			geralMeanAllPeriodsConsume += meanAllPeriodsConsume;
 			
-			double meanNormalActiveTime = (activePeriodsSum-egoistPeriodsSum)/activePeriodsSum;
-			double meanSelfishTime = egoistPeriodsSum / activePeriodsSum;
 			
 			hostsStatus += ("HOST: "+i+"\n");
 			hostsStatus += (meanAllPeriodsConsume+" "+meanNormalPeriodConsume+" "+meanEgoistPeriodConsume+"\n");
 			hostsStatus += (allPeriodsConsume+" "+normalPeriodConsume+" "+egoistPeriodConsume+"\n");
-			hostsStatus += (activePeriodsSum +" " +(activePeriodsSum-egoistPeriodsSum)+" " + egoistPeriodsSum + "\n");
-			hostsStatus += (meanNormalActiveTime + " " + meanSelfishTime+"\n");
-			
+			hostsStatus += (timeOn.get(i) +" " +normalTime.get(i)+" " +selfishTime.get(i) + "\n");
+			hostsStatus += discharges.get(i) + "\n";			
 			//tempo e consumo total em cada intevalo
 			
-			hostsStatus += tempoDeDescarregamento.get(i).size() +" ";
-			
-			for(int t = 0; t < tempoDeDescarregamento.get(i).size(); t++) {
-				if(tempoDeDescarregamento.get(i).get(t).getValue() == endTime) {
-					hostsStatus += initEnergy - energiaRestante.get(i) + " ";
-				}
-				else {
-					hostsStatus += initEnergy + " ";
-				}
-				
-				hostsStatus += tempoDeDescarregamento.get(i).get(t) + " ";
-			}
-			hostsStatus += "\n";
-			
-			//Tempo e consumo total de cada intervalo no modo normal de funcionamento
-			
-			hostsStatus += tempoDeDescarregamento.get(i).size() +" ";
-			
-			for(int t = 0; t < tempoDeDescarregamento.get(i).size(); t++) {
-				hostsStatus += consumoEmPeriodosNormais.get(i).get(t) + " ";
-				try {
-					hostsStatus += tempoDeDescarregamento.get(i).get(t).getKey()+":"+intervalosEgoistas.get(i).get(t).getKey() + " ";
-				}catch(Exception e) {
-					hostsStatus += tempoDeDescarregamento.get(i).get(t) +" ";
-				}
-				
-			}
-			hostsStatus += "\n";
-			
-			//Tempo e consumo total de cada intervalo no modo egoista de funcionamento
-			
-			hostsStatus += intervalosEgoistas.get(i).size() +" ";
-			for(int t = 0; t < intervalosEgoistas.get(i).size(); t++) {
-				hostsStatus += consumoEmPeriodosEgoistas.get(i).get(t) + " ";
-				hostsStatus += intervalosEgoistas.get(i).get(t) + " ";
-			}
 			hostsStatus += "\n";
 			
 			
@@ -331,10 +336,7 @@ public class SelfishBatteryReport extends Report implements UpdateListener{
 				         "energy consumption of all periods  -  energy consumption of Normal periods  -  energy consumption of selfish periods\n"+
 				         "Active total time  -  Normal Active Time  -  Selfish Active Time\n"+
 				         "Normal proportion of time  -  Selfish proportion of time\n"+
-				         "Total Recharges and consumed energy for each active time\n"+
-				         "Total Recharges and consumed energy for each normal active time\n"+
-				         "Total Recharges and consumed energy for each selfish active time\n";
-
+				         "Number of Recharges \n\n";
 		write(legenda);	
 		
 		for(String s : hostsStatusList) {

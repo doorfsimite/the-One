@@ -1,0 +1,20 @@
+Message stats for scenario UFAM_EPIDEMIC_MultiCast_emauc_trace
+sim_time: 89820.0000
+created: 9
+started: 4417
+relayed: 4414
+aborted: 3
+dropped: 0
+removed: 0
+delivered: 217
+delivery_prob: 24.1111
+response_prob: 0.0000
+overhead_ratio: 19.3410
+latency_avg: 5709.8018
+latency_med: 16.0000
+hopcount_avg: 4.7558
+hopcount_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

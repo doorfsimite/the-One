@@ -11,6 +11,7 @@ import java.util.List;
 
 import movement.MovementModel;
 import movement.Path;
+import routing.ActiveRouter;
 import routing.MessageRouter;
 import routing.util.RoutingInfo;
 import util.LabelList;
@@ -65,6 +66,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		this.comBus = comBus;
 		this.location = new Coord(0,0);
 		this.address = getNextAddress();
+		
 		this.name = groupId+address;
 		this.net = new ArrayList<NetworkInterface>();
 
@@ -85,8 +87,13 @@ public class DTNHost implements Comparable<DTNHost> {
 		this.movement.setComBus(comBus);
 		this.movement.setHost(this);
 		
+
 		setRouter(mRouterProto.replicate());
 
+		//------------------------------------------
+		updateEnergy();//tentado forcar o combus a ter energia no primeiro loop
+		//------------------------------------------
+		
 		try {
 			if(this.movement.getClass().equals(Class.forName("movement.ExternalMovementUFAM"))) {
 				this.movement.setHostMap(this);
@@ -130,6 +137,14 @@ public class DTNHost implements Comparable<DTNHost> {
 	}
 	public Coord getLastLocation() {/*System.out.println(this.lastLocations);*/return this.lastLocations.get(0);}
 	public Coord getCurrentLocation() {/*System.out.println(this.lastLocations.get(5));*/return this.lastLocations.get(5);}
+	
+	public void updateEnergy () {
+		ActiveRouter ar = (ActiveRouter) this.router;
+		ar.update();
+	}
+	
+	
+	double lastConstantOnEnergyUpdate = 0.0; //usado para o update de energia constante n ser chamado varias vezes por algum motivo
 //--------------------------------------------------------------------------------------------------	
 	/**
 	 * Returns a new network interface address and increments the address for
@@ -379,6 +394,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void update(boolean simulateConnections) {
 		this.router.recharge();
+		
 		if (!isRadioActive()) {
 			// Make sure inactive nodes don't have connections
 			tearDownAllConnections();
@@ -392,7 +408,11 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
 
 		this.router.update();
-
+		
+		if(this.getInterface(1).isActive() && SimClock.getTime() != lastConstantOnEnergyUpdate) {
+			lastConstantOnEnergyUpdate = SimClock.getTime();
+			this.router.consumeOnTimeEnergy();
+		}
 	}
 	
 	/** 
@@ -536,6 +556,10 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public boolean requestDeliverableMessages(Connection con) {
 		return this.router.requestDeliverableMessages(con);
+	}
+	
+	public double haveDeliverableMessages(DTNHost to) {
+		return this.router.haveDeliverableMessages(to);
 	}
 
 	/**

@@ -91,13 +91,11 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	private List<ActiveListener> activeListeners = null;
 	
 	public void activate() {
-		System.out.println(SimClock.getTime() + " " +this.host.getAddress()+ " activate");
 		activeNodes.add(this.host);
 		this.interfaceStatus = 1;
 		notifyActiveListeners(true);
 	}
 	public void deActivate() {
-		System.out.println(SimClock.getTime() + " " +this.host.getAddress()+ " deativate");
 		activeNodes.remove(this.host);
 		this.interfaceStatus = 0;
 		notifyActiveListeners(false);
@@ -455,7 +453,6 @@ abstract public class NetworkInterface implements ModuleCommunicationListener {
 	 * @param anotherInterface The interface to connect to
 	 */
 	protected void connect(Connection con, NetworkInterface anotherInterface) {
-		System.out.println(SimClock.getTime()+ " " + this.host.getAddress()+" - " + anotherInterface.getHost().getAddress() + " conected");
 		this.connections.add(con);
 		notifyConnectionListeners(CON_UP, anotherInterface.getHost());
 

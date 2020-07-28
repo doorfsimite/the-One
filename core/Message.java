@@ -49,6 +49,7 @@ public class Message implements Comparable<Message> {
 	/** Application ID of the application that created the message */
 	private String	appID;
 	
+	private ArrayList<DTNHost> address_list;
 	static {
 		reset();
 		DTNSim.registerForReset(Message.class.getCanonicalName());
@@ -62,7 +63,7 @@ public class Message implements Comparable<Message> {
 	 * 	will be the same for all replicates of the message)
 	 * @param size Size of the message (in bytes)
 	 */
-	public Message(DTNHost from, DTNHost to, String id, int size) {
+	public Message(DTNHost from, DTNHost to, String id, int size,List<DTNHost> destination_list) {
 		this.from = from;
 		this.to = to;
 		this.id = id;
@@ -78,6 +79,7 @@ public class Message implements Comparable<Message> {
 		this.properties = null;
 		this.appID = null;
 		
+		this.address_list = (ArrayList<DTNHost>)destination_list; 
 		Message.nextUniqueId++;
 		addNodeOnPath(from);
 	}
@@ -86,8 +88,19 @@ public class Message implements Comparable<Message> {
 	 * Returns the node this message is originally from
 	 * @return the node this message is originally from
 	 */
+	
+	public boolean isMulticast() {
+		return this.address_list != null ? true : false;
+	}
+	public ArrayList<DTNHost> getToList(){
+		return this.address_list;
+	}
 	public DTNHost getFrom() {
 		return this.from;
+	}
+	
+	public boolean haveInToList(DTNHost h) {
+		return this.address_list.contains(h);
 	}
 
 	/**
@@ -326,7 +339,7 @@ public class Message implements Comparable<Message> {
 	 * @return A replicate of the message
 	 */
 	public Message replicate() {
-		Message m = new Message(from, to, id, size);
+		Message m = new Message(from, to, id, size,this.address_list);
 		m.copyFrom(this);
 		return m;
 	}

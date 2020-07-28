@@ -87,13 +87,30 @@ public class SimScenario implements Serializable {
 	public static final String SELFISH_MODE = "selfish.mode";
 	
 	public static final String SELFISH_LV = "SelfishLevel";
+	
+	public static final String SELFISH_NODES = "selfishNodes";
 	/*Proporcao de host egoistas no cenario*/
+
+	public static final String SELFISH_NODES_SIZE = "nrOfSelfishNodes";
+	/*Proporcao de host egoistas no cenario*/
+	
+	public static final String  SELFISH_DENY = "SelfishNodeDenyMessages";
+
 	static int genericEgoism = -1;
 	
 	//--EGOISM BASED ON BATERY LEVEL----------------------------------------
-	public static final String SELFISH_BY_BATTERY = "selfishByBatteryLevel";
 	/** Nível de bateria mínimo para o nó se tornar egoísta**/
-	static int selfishBatery = -1;
+	public static final String SELFISH_BY_BATTERY = "selfishByBatteryLevel";
+	
+	/** Seed para gerar o mesmo nível para os mesmos nós em cada run **/
+	public static final String SELFISH_BY_BATTERY_SEED = "selfishBatteryRandomSeed";
+	
+
+	public static final String HOSTS_SIZE = "hosts";
+	
+
+	
+	static boolean selfishBatery = false;
 	
 	
 	//----------------------------------------------------------------------
@@ -162,20 +179,21 @@ public class SimScenario implements Serializable {
 		this.simulateConnections = s.getBoolean(SIM_CON_S);
 
 		//------------------------------------------------------------
-		if(s.contains(SELFISH_LV)) {
-			genericEgoism = s.getInt(SELFISH_LV);
-			s.ensurePositiveValue(genericEgoism, SELFISH_LV);
-			random = new java.util.Random();
-		}
-		
-		if(s.contains(SELFISH_BY_BATTERY)) {
-			selfishBatery = s.getInt(SELFISH_BY_BATTERY);
-			s.ensurePositiveValue(selfishBatery, SELFISH_BY_BATTERY);
+			
+		if(s.contains(SELFISH_BY_BATTERY)) { //prioriza egoismo por bateria em vez do egoismo fixo em caso dos dois estarem no txt de conf.
+			selfishBatery = s.getBoolean(SELFISH_BY_BATTERY);
 			if(genericEgoism > 0 ) {
-				selfishBatery = -1;
-				System.out.println("SELFISH LV MODE ON");
+				genericEgoism = -1;
+				System.out.println("SELFISH_BY_BATTERY MODE ON");
 			}
 		}
+		else if(s.contains(SELFISH_LV)) {
+			random = new java.util.Random();
+			genericEgoism = s.getInt(SELFISH_LV);
+			s.ensurePositiveValue(genericEgoism, SELFISH_LV);
+		}
+		
+		
 		//------------------------------------------------------------
 		s.ensurePositiveValue(nrofGroups, NROF_GROUPS_S);
 		s.ensurePositiveValue(endTime, END_TIME_S);
@@ -201,6 +219,15 @@ public class SimScenario implements Serializable {
 		
 		createHosts();
 		
+		Settings snTest = new Settings("Scenario");
+		if(snTest.contains(SELFISH_NODES)) {
+			int[] sns = snTest.getCsvInts(SELFISH_NODES, snTest.getInt(SELFISH_NODES_SIZE));
+			for (int i = 0; i < snTest.getInt(SELFISH_NODES_SIZE); i++ ) {
+				hosts.get(sns[i]).setEgoism();
+			}
+			showEgoists();
+		}
+	
 		if(genericEgoism > 0) {
 			setEgoistHosts(this.hosts);
 			showEgoists();

@@ -216,6 +216,12 @@ public abstract class Connection {
 		}
 	}
 
+	public boolean haveNode(DTNHost node) {
+		if(this.toNode == node || this.fromNode == node) {
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Returns a String presentation of the connection.
 	 */

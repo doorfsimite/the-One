@@ -138,8 +138,13 @@ public class StandardEventsReader implements ExternalEventsReader {
 					//System.out.println(evento);
 					
 					
-					double host1Energy = Double.valueOf(lineScan.next());
-					double host2Energy = Double.valueOf(lineScan.next());
+//					double host1Energy = Double.valueOf(lineScan.next());
+//					double host2Energy = Double.valueOf(lineScan.next());
+					
+					//ler as energias e nao fazer nada com elas
+					lineScan.next();
+					lineScan.next();
+					
 					//--------------------------------------------------------
 					
 					
@@ -162,13 +167,14 @@ public class StandardEventsReader implements ExternalEventsReader {
 					ConnectionEvent ce = new ConnectionEvent(hostAddr, 
 							host2Addr, interfaceId, isUp, time);
 					
-					ReduceEnergyEvent ree1 = new ReduceEnergyEvent(time,hostAddr,host1Energy);
-					ReduceEnergyEvent ree2 = new ReduceEnergyEvent(time,host2Addr,host2Energy);
+					//Nao reduz eneria de scan durante o experimento de multicast 
+					//ReduceEnergyEvent ree1 = new ReduceEnergyEvent(time,hostAddr,host1Energy);
+					//ReduceEnergyEvent ree2 = new ReduceEnergyEvent(time,host2Addr,host2Energy);
 					
 					events.add(ce);
 					
-					events.add(ree1);
-					events.add(ree2);
+					//events.add(ree1);
+					//events.add(ree2);
 				}
 				else if (action.equals(ACTIVE)) {
 					hostAddr = getHostAddress(lineScan.next());

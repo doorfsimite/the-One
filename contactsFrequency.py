@@ -96,6 +96,38 @@ def getLastConnection(time,host,connections):
 connections = []
 connDurations = []
 
+def getOnConnectionTime(conections):
+    conections = sorted(conections, key=lambda tup: tup[0])
+    msmInicio = []
+    for i in conections:
+        if(msmInicio == []):
+            msmInicio.append([i[0],i[1]])
+        for j in msmInicio:
+            if(i[0] == j[0]):
+                if(i[1] > j[1]):
+                    j[1] = i[1]
+                    break
+            else:
+                msmInicio.append([i[0],i[1]])
+                break
+    
+    current = 0
+
+    validRanges = []
+    for i in range(0,len(msmInicio)):
+        if(msmInicio[i][0] >= msmInicio[current][0] and msmInicio[i][0] < msmInicio[current][1]): #dentro do intervalo
+            if(msmInicio[i][1] > msmInicio[current][1]):
+                msmInicio[current][1] = msmInicio[i][1]
+        else:
+            validRanges.append([msmInicio[current][0],msmInicio[current][1]])
+            current = i
+    
+    tempoTotal = 0
+    for i in validRanges:
+        tempoTotal += i[1] - i[0]
+    return tempoTotal
+
+
 class conection:
     def __init__(self, fromHost, toHost,time,start):
         self.fromHost = fromHost
@@ -173,6 +205,9 @@ for conn in text:
 '''
 
 remainingEnergy = dict()
+contactTime = dict()
+for i in range(0,625):
+    contactTime[i] = []
 
 i = 0
 conectionsSaida = []
@@ -203,9 +238,10 @@ for conn in text:
                     if(isActive(c.fromHost,c.start,c.end) and isActive(c.toHost,c.start,c.end)):
                         if(c.getDuration() > 15):
                             
+                            contactTime[c.fromHost].append((c.start,c.end))
+                            contactTime[c.toHost].append((c.start,c.end))
                             
                             endConnection = conection(int(contact[2]),int(contact[3]),int(float(contact[0])),False)
-
 
                             if endConnection.toHost in remainingEnergy:
                                 endConnection.toHostEnergy = float(contact[-1]) + remainingEnergy[endConnection.toHost]
@@ -237,10 +273,27 @@ for conn in text:
 
 conectionsSaida = sorted(conectionsSaida,key = lambda conection : conection.ordem)
 
-for i in conectionsSaida:
-    print(i.toString()+"\n")
+maior = 0
+times = []
+for i in range(0,625):
+    times.append(getOnConnectionTime(contactTime[i]))
+
+for time in times:
+    if(time > maior):
+        maior = time
+    print(i,time)
+print(maior)
+
+x = str(times)
+
+saida = open("tempoDeContatoTotalDeCadaNo.txt",'w')
+saida.write(x)
+
+#for i in conectionsSaida:
+#    print(i.toString()+"\n")
 
 
-arq_saida = open("/home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/Active_Deactive/contatos_validos/emaucScanContatosValidos.txt","w")
-for i in conectionsSaida:
-    arq_saida.write(i.toString()+"\n")
+#arq_saida = open("/home/simite/Documents/the-One/reports/PIBIC/ufam/totalContacts/Active_Deactive/contatos_validos/emaucScanContatosValidos.txt","w")
+#for i in conectionsSaida:
+#    arq_saida.write(i.toString()+"\n")
+#

@@ -50,7 +50,7 @@ public abstract class ActiveRouter extends MessageRouter {
 	private EnergyModel energy;
 	
 	//-------------------------------------------------------------------------
-
+	public static boolean SelfishNodeDenyMessages;
 	//-------------------------------------------------------------------------
 	
 
@@ -61,18 +61,21 @@ public abstract class ActiveRouter extends MessageRouter {
 	 */
 	public ActiveRouter(Settings s) {
 		super(s);
-		
 		this.policy = new MessageTransferAcceptPolicy(s);
 		
-		/*
+		
 		Settings egoismSettings = new Settings(core.SimScenario.SCENARIO_NS);
-		if(egoismSettings.contains(core.SimScenario.EGOISM_LV)) {
-			this.policy = new MessageTransferAcceptPolicy(egoismSettings);
-		}*/
+		if(egoismSettings.contains(core.SimScenario.SELFISH_DENY)) {
+			SelfishNodeDenyMessages = egoismSettings.getBoolean(core.SimScenario.SELFISH_DENY);
+		}
+		else {
+			SelfishNodeDenyMessages = false;//PQ eu esqueci de por entao coloqueia aqui mas o normal e ser true
+		}
 		
 		this.deleteDelivered = s.getBoolean(DELETE_DELIVERED_S, false);
 		
 		if (s.contains(EnergyModel.INIT_ENERGY_S)) {
+		
 			this.energy = new EnergyModel(s);
 		} else {
 			this.energy = null; /* no energy model */
@@ -87,11 +90,17 @@ public abstract class ActiveRouter extends MessageRouter {
 		super(r);
 		this.deleteDelivered = r.deleteDelivered;
 		this.policy = r.policy;
+
+
 		this.energy = (r.energy != null ? r.energy.replicate() : null);
 	}
 	
 	public void ConsumeEnergy (double energy) {
 		this.energy.reduceEnergy(energy);
+	}
+	
+	public int getMinSelfishBatteryLevel() {
+		return this.energy.getMinSelfishBatteryLevel();
 	}
 	
 	@Override
@@ -126,14 +135,26 @@ public abstract class ActiveRouter extends MessageRouter {
 		ArrayList<Message> temp = 
 			new ArrayList<Message>(this.getMessageCollection());
 		for (Message m : temp) {
-			if (other == m.getTo()) {
-				if (startTransfer(m, con) == RCV_OK) {
-					return true;
+			if(m.isMulticast()) {
+				if(m.haveInToList(other)) {
+					if (startTransfer(m, con) == RCV_OK) {
+						return true;
+					}
+				}
+			}
+			else {
+				if(other == m.getTo()) {
+					if (startTransfer(m, con) == RCV_OK) {
+						return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
+	/**Deve ser sobreescrito pela classe que implementa o roteamento e retornar true se existem alguma mensagem
+	 * desse np para o no To*/
+	public double haveDeliverableMessages(DTNHost to) {return 0.0;}
 	
 	@Override 
 	public boolean createNewMessage(Message m) {
@@ -155,21 +176,28 @@ public abstract class ActiveRouter extends MessageRouter {
 	@Override
 	public Message messageTransferred(String id, DTNHost from) {
 		Message m = super.messageTransferred(id, from);
-
 		/**
 		 *  N.B. With application support the following if-block
 		 *  becomes obsolete, and the response size should be configured 
 		 *  to zero.
 		 */
 		// check if msg was for this host and a response was requested
-		if (m.getTo() == getHost() && m.getResponseSize() > 0) {
-			// generate a response message
-			Message res = new Message(this.getHost(),m.getFrom(), 
-					RESPONSE_PREFIX+m.getId(), m.getResponseSize());
-			this.createNewMessage(res);
-			this.getMessage(RESPONSE_PREFIX+m.getId()).setRequest(m);
+		if ( m.getResponseSize() > 0) {
+			if(m.getTo() == getHost() ) {
+				// generate a response message
+				Message res = new Message(this.getHost(),m.getFrom(), 
+						RESPONSE_PREFIX+m.getId(), m.getResponseSize(),null);
+				this.createNewMessage(res);
+				this.getMessage(RESPONSE_PREFIX+m.getId()).setRequest(m);
+
+			}
+			if(m.isMulticast() && m.haveInToList(getHost())) {
+				Message res = new Message(this.getHost(),m.getFrom(), 
+						RESPONSE_PREFIX+m.getId(), m.getResponseSize(),m.getToList());
+				this.createNewMessage(res);
+				this.getMessage(RESPONSE_PREFIX+m.getId()).setRequest(m);
+			}
 		}
-		
 		return m;
 	}
 	
@@ -205,12 +233,18 @@ public abstract class ActiveRouter extends MessageRouter {
 		if (retVal == RCV_OK) { // started transfer
 			addToSendingConnections(con);
 		}
-		else if (deleteDelivered && retVal == DENIED_OLD && 
-				m.getTo() == con.getOtherNode(this.getHost())) {
-			/* final recipient has already received the msg -> delete it */
-			this.deleteMessage(m.getId(), false);
+		else if (deleteDelivered && retVal == DENIED_OLD) {
+			//se for multicast n pode deletar caso seja entregue
+			if(m.isMulticast() && m.haveInToList(this.getHost())) {
+				return retVal;
+			}
+			if(m.getTo() == con.getOtherNode(this.getHost())){
+				/* final recipient has already received the msg -> delete it */
+				this.deleteMessage(m.getId(), false);
+			}
+			
 		}
-		
+					
 		return retVal;
 	}
 	
@@ -257,7 +291,7 @@ public abstract class ActiveRouter extends MessageRouter {
 			return DENIED_TTL; 
 		}
 //----------------------------------------------------------------------------------------------------------------------------
-		if (energy != null) {
+		if (energy != null && SelfishNodeDenyMessages) {
 			if(energy.getEnergy() <= 0) {
 				return MessageRouter.DENIED_LOW_RESOURCES;
 			}	
@@ -271,7 +305,7 @@ public abstract class ActiveRouter extends MessageRouter {
 			}
 			
 		}
-//----------------------------------------------------------------------------------------------------------------------------		
+//----------------------------------------------------------------------------------------------------------------------------*/		
 		if (!policy.acceptReceiving(from, getHost(), m)) {
 			return MessageRouter.DENIED_POLICY;
 		}
@@ -385,6 +419,9 @@ public abstract class ActiveRouter extends MessageRouter {
 			for (Connection con : getConnections()) {
 				DTNHost to = con.getOtherNode(getHost());
 				if (m.getTo() == to) {
+					forTuples.add(new Tuple<Message, Connection>(m,con));
+				}
+				else if(m.isMulticast() && m.haveInToList(to)) {
 					forTuples.add(new Tuple<Message, Connection>(m,con));
 				}
 			}
@@ -609,8 +646,6 @@ public abstract class ActiveRouter extends MessageRouter {
 	@Override
 	public void update() {		
 		super.update();
-		/* Melhorias futuras. Caso exista conexoes com nos egoistas a conexao é ignorada*/
-		//removeEgoistConnections();
 		
 		/* in theory we can have multiple sending connections even though
 		  currently all routers allow only one concurrent sending connection */
@@ -655,7 +690,10 @@ public abstract class ActiveRouter extends MessageRouter {
 			lastTtlCheck = SimClock.getTime();
 		}
 		
+		
 		if (energy != null) {
+
+
 			/* TODO: add support for other interfaces */
 			NetworkInterface iface = getHost().getInterface(1);
 			energy.update(iface, getHost().getComBus());			
@@ -671,6 +709,9 @@ public abstract class ActiveRouter extends MessageRouter {
 		catch(Exception e) {}
 	}
 	
+	public void consumeOnTimeEnergy() {
+		this.energy.reduceConstantEnergy();
+	}
 	public void removeEgoistConnections() {
 		for (Connection conn : this.getConnections()) {
 			if(conn.getOtherNode(this.getHost()).isEgoist()) {

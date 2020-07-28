@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import core.ConnectionListener;
 import core.DTNHost;
+import core.SimClock;
 
 /**
  * Generates Graphviz compatible graph from connections.
@@ -46,14 +47,24 @@ public class AdjacencyGraphvizReport extends Report implements ConnectionListene
 		
 		if (ci == null) {
 			cons.put(host1+HOST_DELIM+host2, new ConnectionInfo(host1,host2));
+			ci = cons.get(host1+HOST_DELIM+host2);
+			ci.startConnection();
 		}
 		else {
 			ci.nrofConnections++;
+			ci.startConnection();
 		}
+
 	}
 
 	// 	Nothing to do here..
-	public void hostsDisconnected(DTNHost host1, DTNHost host2) {}
+	public void hostsDisconnected(DTNHost host1, DTNHost host2) {
+		ConnectionInfo ci = cons.get(host1+HOST_DELIM+host2);
+		if(ci == null) {
+			ci = cons.get(host2+HOST_DELIM+host1);
+		}
+		ci.endConnection();
+	}
 	
 	/**
 	 * Sets all hosts that should be in the graph at least once
@@ -68,8 +79,9 @@ public class AdjacencyGraphvizReport extends Report implements ConnectionListene
 		setPrefix("\t"); // indent following lines by one tab
 		
 		for (ConnectionInfo ci : cons.values()) {
-			int weight = ci.nrofConnections;
-			write(ci.h1 + "--" + ci.h2 + " [weight=" + weight + "];");
+		//	int weight = ci.nrofConnections;
+			int weight = (int)ci.totalContactTime;
+			write(ci.h1.getAddress() + "--" + ci.h2.getAddress() + " [weight=" + weight + "];");
 		}
 		
 		// mention all hosts in the graph at least once
@@ -93,11 +105,15 @@ public class AdjacencyGraphvizReport extends Report implements ConnectionListene
 		private DTNHost h1;
 		private DTNHost h2;
 		private int nrofConnections;
+		double start;
+		double totalContactTime;
 		
 		public ConnectionInfo(DTNHost h1, DTNHost h2) {
 			this.h1 = h1;
 			this.h2 = h2;
 			this.nrofConnections = 1;
+			this.totalContactTime = 0;
+			
 		}
 				
 		public boolean equals(Object o) {
@@ -105,6 +121,12 @@ public class AdjacencyGraphvizReport extends Report implements ConnectionListene
 			return o.toString().equals(this.toString());
 		}
 		
+		public void startConnection() {
+			start = SimClock.getTime();
+		}
+		public void endConnection() {
+			this.totalContactTime += (SimClock.getTime() - start);
+		}
 		public int hashCode() {
 			return toString().hashCode();
 		}

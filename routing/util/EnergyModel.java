@@ -67,12 +67,19 @@ public class EnergyModel implements ModuleCommunicationListener {
 	private double idleEnergy;
 	public static final String SLEEP_ENERGY_S = "sleepEnergy";
 	private double sleepEnergy;
+	private double onTimeConsume;
+	
 	//----------------------------------------------------------------------------------
 	
 	private double lastUpdate;
 	private ModuleCommunicationBus comBus;
 	private static Random rng = null;
-
+	private static Random selfishBatterySeed;
+	/** consumo medio de energia durante o tempo ligado (apps, S.O e etc) **/
+	public static final String CONSUMPTION_OF_ON_TIME = "constantEnergyConsumption";
+	
+	/** consumo medio de energia durante o tempo ligado (apps, S.O e etc) **/
+	public static final String ENERGY_NS = "Energy";
 	//-------------------------------------------------------------------------------
 	/** Energia recebida por cada recarga **/
 	public static final String RECHARGE_ENERGY_S = "rechargeEnergy";
@@ -85,7 +92,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 	private double receveEnergy;
 	
 	//nivel minimo de energia para o no se tornar egoista
-	static int lowBatteryLimit = 0;
+	private int lowBatteryLimit = 0;
 
 	/** energy value in percent da combus **/
 	public static final String ENERGY_VALUE_PERCENT = "Energy.valuePercent";
@@ -109,6 +116,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 	 * @param s The settings object
 	 */
 	public EnergyModel(Settings s) {
+
 		this.initEnergy = s.getCsvDoubles(INIT_ENERGY_S);
 		if (this.initEnergy.length != 1 && this.initEnergy.length != 2) {
 			throw new SettingsError(INIT_ENERGY_S + " setting must have " + 
@@ -134,12 +142,8 @@ public class EnergyModel implements ModuleCommunicationListener {
 		else {
 			this.rechargeEnergy = initEnergy[1];
 		}
-		Settings minBatterySettings = new Settings(core.SimScenario.SCENARIO_NS);
-		if(minBatterySettings.contains(core.SimScenario.SELFISH_BY_BATTERY)) {
-			lowBatteryLimit = minBatterySettings.getInt(core.SimScenario.SELFISH_BY_BATTERY);
-		}
-		
-		
+		Settings energySettings = new Settings(ENERGY_NS);
+		this.onTimeConsume  = energySettings.getDouble(CONSUMPTION_OF_ON_TIME);
 		//---------------------------------------------------------------------------
 	
 		
@@ -173,6 +177,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 		this.rechargeEnergy = proto.rechargeEnergy;
 		this.egoistBefore = false;
 		this.dischargeTime = 0;
+		this.onTimeConsume = proto.onTimeConsume;
 
 //---------------------------------------------------------------------		
 		this.warmupTime  = proto.warmupTime;
@@ -180,6 +185,14 @@ public class EnergyModel implements ModuleCommunicationListener {
 		this.comBus = null;
 		this.lastUpdate = 0;
 		this.ativo = 1;
+		
+		Settings minBatterySettings = new Settings(core.SimScenario.SCENARIO_NS);
+		if(minBatterySettings.contains(core.SimScenario.SELFISH_BY_BATTERY) && minBatterySettings.getBoolean(core.SimScenario.SELFISH_BY_BATTERY)) {
+			if(selfishBatterySeed == null) {
+				selfishBatterySeed = new java.util.Random(minBatterySettings.getSetting(core.SimScenario.SELFISH_BY_BATTERY_SEED).hashCode());
+			}
+			this.lowBatteryLimit = selfishBatterySeed.nextInt(100);
+		}
 	}
 	
 	void setDischargeTime(double time) {
@@ -268,6 +281,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 			
 		} else {
 			comBus.updateDouble(ENERGY_VALUE_ID, -amount);
+
 		}
 		//-----egoismo por nivel de bateria----------------------------------------------------------------------
 		this.comBus.updateProperty(ENERGY_VALUE_PERCENT, this.getEnergyPercent());
@@ -280,7 +294,6 @@ public class EnergyModel implements ModuleCommunicationListener {
 				comBus.updateProperty(core.SimScenario.SELFISH_MODE, false);
 			}
 		}
-		
 		//---------------------------------------------------------------------------
 
 	}
@@ -321,9 +334,10 @@ public class EnergyModel implements ModuleCommunicationListener {
 	 */
 	public void update(NetworkInterface iface, ModuleCommunicationBus comBus) {
 		double simTime = SimClock.getTime();
-		//recharge();
 		double delta = simTime - this.lastUpdate;
 		if (this.comBus == null) {
+
+		//	System.out.println(" "+ iface.getHost().getAddress()+ " instanciou combus");
 			this.comBus = comBus;
 			this.comBus.addProperty(ENERGY_VALUE_ID, this.currentEnergy);
 			this.comBus.subscribe(ENERGY_VALUE_ID, this);
@@ -340,21 +354,25 @@ public class EnergyModel implements ModuleCommunicationListener {
 		}
 		
 
-		if (simTime > this.lastUpdate && iface.isTransferring()) {
-			/* sending or receiving data */
-			
-			//diferenciar transmissão de recepção -------------------------------------------------------------
-			if(iface.isTx()) {
-				reduceEnergy(delta * this.transmitEnergy);	
+		if (simTime > this.lastUpdate ) {
+			if(iface.isTransferring()) {
+				/* sending or receiving data */
+				
+				//diferenciar transmissão de recepção -------------------------------------------------------------
+				if(iface.isTx()) {
+					reduceEnergy(delta * this.transmitEnergy);	
+				}
+				else {
+					reduceEnergy(delta * this.receveEnergy);	
+				}
+				//System.out.println(iface.getHost() + " "+ this.getEnergyPercent());
+				//------------------------------------------------------------------------------------------------					
 			}
-			else {
-				reduceEnergy(delta * this.receveEnergy);	
-			}
-			//------------------------------------------------------------------------------------------------					
 		}
 		this.lastUpdate = simTime;
-		if (iface.isScanning()) {
-			/* scanning at this update round */
+		
+/*		if (iface.isScanning()) { MULTICAST NAO IMPLEMENTA CUSTO DE SCAN
+			/* scanning at this update round 
 			if (iface.getTransmitRange() > 0) {
 				if (delta < 1) {
 					reduceEnergy(this.scanEnergy * delta);
@@ -363,7 +381,7 @@ public class EnergyModel implements ModuleCommunicationListener {
 				}
 			}
 		}
-		else {
+		else { 
 
 			if(iface.getInterfaceState() == 1) {
 				reduceEnergy(this.idleEnergy);
@@ -371,14 +389,24 @@ public class EnergyModel implements ModuleCommunicationListener {
 			else {
 				reduceEnergy(this.sleepEnergy);
 			}
-		}
+		}*/
 	}
-		
+
+	public void reduceConstantEnergy() {
+		//if(SimClock.getTime() - this.lastUpdate <= 1){
+			reduceEnergy(this.onTimeConsume);
+		//}
+	}
+	public int getMinSelfishBatteryLevel() {
+		return this.lowBatteryLimit;
+	}
+	
 	/**
 	 * Called by the combus if the energy value is changed
 	 * @param key The energy ID
 	 * @param newValue The new energy value
 	 */
+	
 	public void moduleValueChanged(String key, Object newValue) {
 		if(key == ENERGY_VALUE_ID) {
 			this.currentEnergy = (Double)newValue;

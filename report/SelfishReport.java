@@ -90,6 +90,7 @@ public class SelfishReport extends Report implements UpdateListener{
 			//System.out.println("iniciou a primeira vez aqui");
 			for(DTNHost h : hosts) {
 				isEgoist.add(h.getAddress(), h.isEgoist());
+				
 				energiaInicial.add((double) h.getComBus().getProperty(routing.util.EnergyModel.ENERGY_VALUE_ID));
 				//System.out.println(isEgoist.get(h.getAddress()));
 				
@@ -116,7 +117,6 @@ public class SelfishReport extends Report implements UpdateListener{
 		}		
 		
 		for(DTNHost h : hosts) {
-			
 			Double value = (Double) h.getComBus().getProperty(routing.util.EnergyModel.ENERGY_VALUE_ID);
 			if(value == 0.0) {
 				if(lastCheck.get(h.getAddress()) != simTime - 1) {
@@ -131,7 +131,8 @@ public class SelfishReport extends Report implements UpdateListener{
 				usedEnergy.set(h.getAddress(),initEnergy - value);
 			}
 		}
-		
+			
+
 	}
 	
 	public void lastUpdated(List<DTNHost> hosts) {//falta adicionar o ultimo periodo sem descarregar

@@ -1,0 +1,33 @@
+Selfish Battery Level: [0, 0]
+Hosts: 2
+Hosts Average Energy Consume/s: 0.16329230769238515
+Hosts Average normal Energy Consume/s: 0.16329230769238515
+Hosts Average  Selfish Period Consume/s: 0.0
+
+Hosts Average Energy Consume: 2.122800000001007
+Hosts Average Normal Energy Consume: 2.122800000001007
+Hosts Average Selfish Energy Consume: 0.0
+
+Description:
+host number
+average energy consumption of all periods  - average energy consumption of Normal periods  -  average energy consumption of all selfish periods
+energy consumption of all periods  -  energy consumption of Normal periods  -  energy consumption of selfish periods
+Active total time  -  Normal Active Time  -  Selfish Active Time
+Normal proportion of time  -  Selfish proportion of time
+Number of Recharges 
+
+
+HOST: 0
+0.2845384615385018 0.2845384615385018 0.0
+3.699000000000524 3.699000000000524 0.0
+13.0 13.0 0.0
+0
+
+
+HOST: 1
+0.04204615384626847 0.04204615384626847 0.0
+0.5466000000014901 0.5466000000014901 0.0
+13.0 13.0 0.0
+0
+
+

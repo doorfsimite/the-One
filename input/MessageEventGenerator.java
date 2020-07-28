@@ -52,13 +52,13 @@ public class MessageEventGenerator implements EventQueue {
 	/** Range of host addresses that can be receivers */
 	protected int[] toHostRange = null;
 	/** Next identifier for a message */
-	private int id = 0;
+	protected int id = 0;
 	/** Prefix for the messages */
 	protected String idPrefix;
 	/** Size range of the messages (min, max) */
-	private int[] sizeRange;
+	protected int[] sizeRange;
 	/** Interval between messages (min, max) */
-	private int[] msgInterval;
+	protected int[] msgInterval;
 	/** Time range for message creation (min, max) */
 	protected double[] msgTime;
 
@@ -92,7 +92,6 @@ public class MessageEventGenerator implements EventQueue {
 		
 		/* if prefix is unique, so will be the rng's sequence */
 		this.rng = new Random(idPrefix.hashCode());
-		
 		if (this.sizeRange.length == 1) {
 			/* convert single value to range with 0 length */
 			this.sizeRange = new int[] {this.sizeRange[0], this.sizeRange[0]};
@@ -125,10 +124,10 @@ public class MessageEventGenerator implements EventQueue {
 		}
 		
 		/* calculate the first event's time */
-		this.nextEventsTime = (this.msgTime != null ? this.msgTime[0] : 0) 
+		this.nextEventsTime = (this.msgTime != null ? this.msgTime[0] : 0) ;/*
 			+ msgInterval[0] + 
 			(msgInterval[0] == msgInterval[1] ? 0 : 
-			rng.nextInt(msgInterval[1] - msgInterval[0]));
+			rng.nextInt(msgInterval[1] - msgInterval[0]));*/
 	}
 	
 	
@@ -201,7 +200,7 @@ public class MessageEventGenerator implements EventQueue {
 		
 		/* Create event and advance to next event */
 		MessageCreateEvent mce = new MessageCreateEvent(from, to, this.getID(), 
-				msgSize, responseSize, this.nextEventsTime);
+				msgSize, responseSize, this.nextEventsTime,false,null);
 		this.nextEventsTime += interval;	
 		
 		if (this.msgTime != null && this.nextEventsTime > this.msgTime[1]) {

@@ -77,14 +77,21 @@ public abstract class MessageRouter {
 	public static final int DENIED_LOW_RESOURCES = -4;
 	/** Receive return value for a node low on some resource(s) */
 	public static final int DENIED_POLICY = -5;
+	// retorno de congestion control
+	public static final int DENIED_ALREADY_RELAYED = -6;
+	// retorno interface off
+	public static final int DENIED_INTERFACE_OFF = -7;
+	// ja entregue
+	public static final int DENIED_DELIVERED = -8;
+	
 	/** Receive return value for unspecified reason */
 	public static final int DENIED_UNSPECIFIED = -99;
 	
 	//EGOISM
-	public static final int EGOIST = -6;
+	public static final int EGOIST = -9;
 	
 	//EGOISM because of low batery level
-	public static final int EGOIST_ENERGY_LEVEL = -7;
+	public static final int EGOIST_ENERGY_LEVEL = -10;
 		
 	
 	private List<MessageListener> mListeners;
@@ -323,6 +330,9 @@ public abstract class MessageRouter {
 		return false; // default behavior is to not start -- subclasses override
 	}
 	
+	
+	public double haveDeliverableMessages(DTNHost to) {return 0.0;} //deve ser sobreCarregado pelo active router e pela subclasse dele
+	
 	/**
 	 * Try to start receiving a message from another host.
 	 * @param m Message to put in the receiving buffer
@@ -378,16 +388,27 @@ public abstract class MessageRouter {
 		Message aMessage = (outgoing==null)?(incoming):(outgoing);
 		// If the application re-targets the message (changes 'to')
 		// then the message is not considered as 'delivered' to this host.
-		isFinalRecipient = aMessage.getTo() == this.host;
+		
+		if(aMessage.isMulticast()) {
+			isFinalRecipient = aMessage.haveInToList(this.host) ? true : false;
+			if(outgoing!=null) {
+				addToMessages(aMessage, false);
+			}
+		}
+		else {
+			isFinalRecipient = aMessage.getTo() == this.host;
+			if (!isFinalRecipient && outgoing!=null) {
+				// not the final recipient and app doesn't want to drop the message
+				// -> put to buffer
+				addToMessages(aMessage, false);
+			}
+		
+		}
 		isFirstDelivery = isFinalRecipient &&
 		!isDeliveredMessage(aMessage);
 
-		if (!isFinalRecipient && outgoing!=null) {
-			// not the final recipient and app doesn't want to drop the message
-			// -> put to buffer
-			addToMessages(aMessage, false);
-		} else if (isFirstDelivery) {
-			this.deliveredMessages.put(id, aMessage);
+	    if (isFirstDelivery) {
+	    	this.deliveredMessages.put(id, aMessage);
 		} else if (outgoing == null) {
 			// Blacklist messages that an app wants to drop.
 			// Otherwise the peer will just try to send it back again.
@@ -674,4 +695,16 @@ public abstract class MessageRouter {
 	}
 
 	public void recharge() {}
+	public void consumeOnTimeEnergy(){}
+	
+	/** add no delivered messages */
+	public void deliveredMessagesPutting(String id,Message m){
+		this.deliveredMessages.put(id, m);
+	}
+	
+	/** pega os listeners **/
+	public List<MessageListener> getmListeners(){
+		return this.mListeners;
+	}
+
 }
