@@ -83,7 +83,6 @@ def getHostConsume(path,selfishLevel,fileName):
                 linha[-1] = linha[-1][:-1]
                 for l in range(0,len(linha)):
                     linha[l] = float(linha[l])
-                print(linha)
                 consume.append(linha)
                 i = i+3
         else:
@@ -103,7 +102,6 @@ def getHostConsume(path,selfishLevel,fileName):
         else:
             totalConsume = consume
             notFirst = True
-    print(totalConsume)
     for i in range(0,len(totalConsume)):
         for j in range(0,3):
             totalConsume[i][j] = totalConsume[i][j]/3
@@ -188,13 +186,15 @@ def getHostsDischarges(path):
             i = i+3
     return discharges
 
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/intel/messageSize/500MB"
+path = "/home/simite/Documents/the-One/reports/PIBIC/intel/messageSize/500MB"
 trace = "Intel"
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/infoCom2006/messageSize/500MB"
-trace = "InfoCom2006"
 
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/cambridge/messageSize/500MB"
+path = "/home/simite/Documents/the-One/reports/PIBIC/infoCom2006/messageSize/500MB"
+trace = "InfoCom2006"
+'''
+path = "/home/simite/Documents/the-One/reports/PIBIC/cambridge/messageSize/500MB"
 trace = "Cambridge"
+'''
 #0 mean energy consume
 #1 energy consume
 #2 Average recharge time
@@ -216,25 +216,56 @@ selfishLevel = 0
 
 hosts = hostsSize(path+"0/0/"+trace+"_trace_SelfishReport.txt")
 
+allnormalEnergyConsume = []
+allselfishEnergyConsume = []
+allselfishNodes = []
+allnormalNodes = []
+allhostsConsume = []
 
 messageSize = ["100","250","500"]
 
+for run in range(0,3):
+    trace = "InfoCom2006"
+    if(run == 0):
+        path = "/home/simite/Documents/the-One/reports/PIBIC/infoCom2006/selfishLevel"
+    if(run == 1):
+        path = "/home/simite/Documents/the-One/reports/PIBIC/infoCom2006/selfishLevel"
+    if(run == 2):
+        path = "/home/simite/Documents/the-One/reports/PIBIC/infoCom2006/selfishLevel"
 
-for i in range(0,11):#numero de niveis de egoismo
-    
-    #INFORMACAO GERAL DA REDE
-    proportion.append(SelfishNodesProportion(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    normalEnergyConsume.append(normalConsumedEnergy(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
-    selfishEnergyConsume.append(selfishConsumedEnergy(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
+    hosts = hostsSize(path+"/0/"+trace+"_trace_SelfishReport.txt")
+    print(path)
+    for i in range(0,11):#numero de niveis de egoismo
+        #INFORMACAO GERAL DA REDE
+        #proportion.append(SelfishNodesProportion(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+        normalEnergyConsume.append(normalConsumedEnergy(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
+        selfishEnergyConsume.append(selfishConsumedEnergy(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
 
 
-    #ESPECIFICO DE CADA NO
-    selfishNodes.append(getSelfishNodes(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    normalNodes.append(getNormalNodes(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    hostsConsume.append(getHostConsume(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
-    #hostsDischarges.append(getHostsDischarges(path+messageSize[run]+"MB"+str(run)+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+        #ESPECIFICO DE CADA NO
+        selfishNodes.append(getSelfishNodes(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+        normalNodes.append(getNormalNodes(path+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+        hostsConsume.append(getHostConsume(path,selfishLevel,trace+"_trace_SelfishReport.txt"))
+        #hostsDischarges.append(getHostsDischarges(path+messageSize[run]+"MB"+str(run)+"/"+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
 
-    selfishLevel += 10
+        selfishLevel += 10
+    selfishLevel = 0
+    allnormalEnergyConsume.append(normalEnergyConsume)
+    allselfishEnergyConsume.append(selfishEnergyConsume)
+    allselfishNodes.append(selfishNodes)
+    allnormalNodes.append(normalNodes)
+    allhostsConsume.append(hostsConsume)
+
+
+    normalEnergyConsume = []
+    selfishEnergyConsume = []
+    proportion = []
+    selfishNodes = []
+    normalNodes = []
+    hostsConsume = []
+    hostsDischarges = []
+    buffers = []
+    selfishLevel = 0
 
 selfishLevel = [0,10,20,30,40,50,60,70,80,90,100]
 marks = [".","^","2","s","p","*","h","+","|","_","1"]
@@ -244,7 +275,7 @@ marks = [".","^","2","s","p","*","h","+","|","_","1"]
 #0 mean energy consume
 #1 energy consume
 #2 Average recharge time
-
+'''
 meanNormalEnergy = []
 meanSelfishEnergy = []
 
@@ -264,15 +295,45 @@ for nivel in range(0,len(selfishLevel)):
     meanSelfishEnergy[nivel] = (float(selfishEnergyConsume[nivel][1]))
 
     for h in range(0,hosts):
-        if(selfishNodes[nivel].__contains__(str(h))):
+        if(allselfishNodes[run][nivel].__contains__(str(h))):
             totalSelfishEnergy[nivel] += float(hostsConsume[nivel][h][1])
         else:
             totalNormalEnergy[nivel] +=  float(hostsConsume[nivel][h][1])
-'''
+
 print(totalNormalEnergy)
 print(totalSelfishEnergy)
 
 '''
+
+
+totalNormalEnergy100 = []
+totalSelfishEnergy100 = []
+totalNormalEnergy250 = []
+totalSelfishEnergy250 = []
+totalNormalEnergy500 = []
+totalSelfishEnergy500 = []
+
+print(allselfishEnergyConsume[1])
+print()
+print(allselfishEnergyConsume[2])
+
+for nivel in range(0,len(selfishLevel)):
+
+    totalNormalEnergy100.append(0)
+    totalSelfishEnergy100.append(0)
+    totalNormalEnergy250.append(0)
+    totalSelfishEnergy250.append(0)
+    totalNormalEnergy500.append(0)
+    totalSelfishEnergy500.append(0) 
+
+    totalSelfishEnergy100[nivel] += float(allselfishEnergyConsume[0][nivel][1])
+    totalNormalEnergy100[nivel] +=  float(allnormalEnergyConsume[0][nivel][1])
+    totalSelfishEnergy250[nivel] += float(allselfishEnergyConsume[1][nivel][1])
+    totalNormalEnergy250[nivel] +=  float(allnormalEnergyConsume[1][nivel][1])
+    totalSelfishEnergy500[nivel] += float(allselfishEnergyConsume[2][nivel][1])
+    totalNormalEnergy500[nivel] +=  float(allnormalEnergyConsume[2][nivel][1])
+'''
+
 media = 0
 loop = 0
 for i in range(0,len(meanNormalEnergy)):
@@ -299,18 +360,30 @@ plt.ylabel('\nEnergia consumida ( J )',fontsize=14)
 legend = ax.legend(loc='upper left', shadow=False, fontsize='small')
 plt.show()
 
+totalNormalEnergy100
+totalSelfishEnergy100
+totalNormalEnergy250
+totalSelfishEnergy250
+totalNormalEnergy500
+totalSelfishEnergy500 
 
 '''
+
 fig, ax = plt.subplots()
 
-ax.plot(selfishLevel,totalNormalEnergy,label="Total do consumo normal",marker=marks[0])
-ax.plot(selfishLevel,totalSelfishEnergy,label="Total do consumo egoísta",marker=marks[1])
-plt.xlabel('nível de egoísmo')
-plt.ylabel('Energia consumida (J)')
+ax.plot(selfishLevel,totalNormalEnergy100,label='Egoísta',marker=marks[0])
+ax.plot(selfishLevel,totalSelfishEnergy100,label="Normal",marker=marks[1])
+#ax.plot(selfishLevel,totalNormalEnergy250,label="normal 250 MB",marker=marks[2],color='blue')
+#ax.plot(selfishLevel,totalSelfishEnergy250,label="egoísta 250 MB",marker=marks[3],color='orange')
+#ax.plot(selfishLevel,totalNormalEnergy500,label="normal 500 MB",marker=marks[4],color='blue')
+#ax.plot(selfishLevel,totalSelfishEnergy500,label="egoísta 500 MB",marker=marks[5],color='orange')
+
+plt.xlabel('nível de egoísmo',fontsize=16)
+plt.ylabel('Energia consumida (J)',fontsize=16)
 legend = ax.legend(loc='upper left', shadow=False, fontsize='small')
 plt.show()
 
-
+'''
 #print(normalDischarges)
 fig, ax = plt.subplots()
 

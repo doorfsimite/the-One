@@ -1,21 +1,30 @@
 import matplotlib.pyplot as plt
+
 import numpy as np
 import re 
+#seta a fonte dos graficos em times new roman
+def messageStatsReport_deliveryRate(path,fileName,files = 1):
+    total = 0
+    for i in range(0,files):
+        arq = open(path+str(i)+"/"+fileName)
+        text = arq.readlines()
+        total += float (re.split(r' ',text[9])[1][:-1])
+    return total/files
+def messageStatsReport_ropAvr(path,fileName,files = 1):
+    total = 0
+    for i in range(0,files):
+        arq = open(path+str(i)+"/"+fileName)
+        text = arq.readlines()
+        total += float (re.split(r' ',text[14])[1][:-1])
+    return total/files
 
-def messageStatsReport_deliveryRate(path):
-    arq = open(path)
-    text = arq.readlines()
-    return float (re.split(r' ',text[9])[1][:-1])
-
-def messageStatsReport_ropAvr(path):
-    arq = open(path)
-    text = arq.readlines()
-    return float (re.split(r' ',text[14])[1][:-1])
-
-def messageStatsReport_transferedMessages(path):
-    arq = open(path)
-    text = arq.readlines()
-    return float (re.split(r' ',text[3])[1][:-1])
+def messageStatsReport_transferedMessages(path,fileName,files = 1):
+    total = 0
+    for i in range(0,files):
+        arq = open(path+str(i)+"/"+fileName)
+        text = arq.readlines()
+        total += float (re.split(r' ',text[3])[1][:-1])
+    return total/files
 
 def messageStatsReport_createdMessages(path):
     arq = open(path)
@@ -23,15 +32,21 @@ def messageStatsReport_createdMessages(path):
     return float (re.split(r' ',text[2])[1][:-1])
 
 
-def messageStatsReport_latencyAverage(path):
-    arq = open(path)
-    text = arq.readlines()
-    return float (re.split(r' ',text[12])[1][:-1])
+def messageStatsReport_latencyAverage(path,fileName,files = 1):
+    total = 0
+    for i in range(0,files):
+        arq = open(path+str(i)+"/"+fileName)
+        text = arq.readlines()
+        total += float (re.split(r' ',text[12])[1][:-1])
+    return total/files
 
-def messageStatsReport_latencyMedian(path):
-    arq = open(path)
-    text = arq.readlines()
-    return float (re.split(r' ',text[13])[1][:-1])
+def messageStatsReport_latencyMedian(path,fileName,files = 1):
+    total = 0
+    for i in range(0,files):
+        arq = open(path+str(i)+"/"+fileName)
+        text = arq.readlines()
+        total += float (re.split(r' ',text[13])[1][:-1])
+    return total/files
 
 
 def totalEncountersReport(path):
@@ -45,16 +60,19 @@ def totalEncountersReport(path):
     return enconters
 
 
-def bufferOccupancy(path):
-    arq = open(path)
-    text = arq.readlines()
+def bufferOccupancy(path,fileName,file = 0):
+    total = 0
     buffers = []
+    arq = open(path+str(file)+"/"+fileName)
+    text = arq.readlines()
+
     for i in range (5,len(text)):
         buffer = re.split(r' ',text[i][:-1])
         buffer = buffer[1:]
         for f in range(0,len(buffer)):
             buffer[f] = float(buffer[f])
         buffers.append(buffer)
+
     return buffers
 
 def bufferOccupancyTimes(path):
@@ -118,48 +136,63 @@ def selfishConsumedEnergy(path):
     return consume
     
 
-def getSelfishNodes(path):
-    arq = open(path)
-    text = arq.readlines()
-    selfishNodes = []
-    if(text[2] == "No egoist Host Data\n"):
-        i = 11
-        while(i < len(text)-1):
-            host = re.split(r' ',text[i])
-            if(host[2] == "Selfish\n"):
-                selfishNodes.append(host[1])
-            i = i+3
-    else:
-        i = 13
-        while(i < len(text)-1):
-            host = re.split(r' ',text[i])
-            if(host[2] == "Selfish\n"):
-                selfishNodes.append(host[1])
-            i = i+3
-    return selfishNodes
+def getSelfishNodes(path,fileName,files = 0):
+    allRunsSelfishNode = []
+    eachRunSelfishNodes = []
+    for f in range(0,files):
+        for selfishLevel in range(0,11):
+            arq = open(path+str(f)+"/"+str(selfishLevel*10)+fileName)
+            text = arq.readlines()
+            selfishNodes = []
+            if(text[2] == "No egoist Host Data\n"):
+                i = 11
+                while(i < len(text)-1):
+                    host = re.split(r' ',text[i])
+                    if(host[2] == "Selfish\n"):
+                        selfishNodes.append(host[1])
+                    i = i+3
+            else:
+                i = 13
+                while(i < len(text)-1):
+                    host = re.split(r' ',text[i])
+                    if(host[2] == "Selfish\n"):
+                        selfishNodes.append(host[1])
+                    i = i+3
+            eachRunSelfishNodes.append(selfishNodes)
+        allRunsSelfishNode.append(eachRunSelfishNodes)
+        eachRunSelfishNodes = []
+    return allRunsSelfishNode
     
 
 
 
-def getNormalNodes(path):
-    arq = open(path)
-    text = arq.readlines()
-    normalNodes = []
-    if(text[2] == "No egoist Host Data\n"):
-        i = 11
-        while(i < len(text)-1):
-            host = re.split(r' ',text[i])
-            if(host[2] == "Normal"):
-                normalNodes.append(host[1])
-            i = i+3
-    else:
-        i = 13
-        while(i < len(text)-1):
-            host = re.split(r' ',text[i])
-            if(host[2] == "Normal"):
-                normalNodes.append(host[1])
-            i = i+3
-    return normalNodes
+def getNormalNodes(path,fileName,files = 0):
+    allRunsNormalNode = []
+    eachRunNormalNodes = []
+    for f in range(0,files):
+        for selfishLevel in range(0,11):
+            arq = open(path+str(f)+"/"+str(selfishLevel*10)+fileName)
+            text = arq.readlines()
+            normalNodes = []
+    
+            if(text[2] == "No egoist Host Data\n"):
+                i = 11
+                while(i < len(text)-1):
+                    host = re.split(r' ',text[i])
+                    if(host[2] == "Normal"):
+                        normalNodes.append(host[1])
+                    i = i+3
+            else:
+                i = 13
+                while(i < len(text)-1):
+                    host = re.split(r' ',text[i])
+                    if(host[2] == "Normal"):
+                        normalNodes.append(host[1])
+                    i = i+3
+            eachRunNormalNodes.append(normalNodes)
+        allRunsNormalNode.append(eachRunNormalNodes)
+        eachRunNormalNodes = []
+    return allRunsNormalNode
     
 
 def getHostConsume(path):
@@ -218,18 +251,18 @@ def getHostsDischarges(path):
     return discharges
 
 
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/intel/selfishLevel/"
+path = "/home/simite/Documents/the-One/reports/PIBIC/intel/selfishLevel"
 trace = "Intel"
 
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/infoCom2006/selfishLevel0/"
+path = "/home/simite/Documents/the-One/reports/PIBIC/infoCom2006/selfishLevel"
 trace = "InfoCom2006"
 
-path = "/home/simite/Documents/the-one-1.6.0/reports/PIBIC/cambridge/selfishLevel0/"
+path = "/home/simite/Documents/the-One/reports/PIBIC/cambridge/selfishLevel"
 trace = "Cambridge"
 
 selfishLevel = 0
 
-createdMessages = messageStatsReport_createdMessages(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt")
+#createdMessages = messageStatsReport_createdMessages(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt")
 
 deliveryRatePerSelfishLevel = []
 ropCountAvrPerSelfishLevel = []
@@ -261,61 +294,69 @@ normalNodes = []
 hostsConsume = []
 hostsDischarges = []
 
-totalEncounters = (totalEncountersReport(path+str(selfishLevel)+"/"+trace+"_trace_TotalEncountersReport.txt"))
-buffersTimes = (bufferOccupancyTimes(path+str(selfishLevel)+"/"+trace+"_trace_BufferOccupancyReport.txt"))
-hosts = hostsSize(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt")
+#totalEncounters = (totalEncountersReport(path+str(selfishLevel)+"/"+trace+"_trace_TotalEncountersReport.txt"))
+buffersTimes = (bufferOccupancyTimes(path+'0/0/'+trace+"_trace_BufferOccupancyReport.txt"))
+hosts = hostsSize(path+str(selfishLevel)+"/0/"+trace+"_trace_SelfishReport.txt")
+
 
 for i in range(0,11):#numero de niveis de egoismo
     
     #EM RELAÇÃO A EFICIENCIA DE TRANSMISSÃO DE MENSAGENS
     
     #MessageStatsReports
-    deliveryRatePerSelfishLevel.append(messageStatsReport_deliveryRate(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt"))
-    ropCountAvrPerSelfishLevel.append(messageStatsReport_ropAvr(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt"))
-    transferedMessages.append(messageStatsReport_transferedMessages(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt"))
-    latencyAverage.append(messageStatsReport_latencyAverage(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt"))
-    latencyMedian.append(messageStatsReport_latencyMedian(path+str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt"))
+    #deliveryRatePerSelfishLevel.append(messageStatsReport_deliveryRate(path,str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt",10))
+    #ropCountAvrPerSelfishLevel.append(messageStatsReport_ropAvr(path,str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt",10))
+    #transferedMessages.append(messageStatsReport_transferedMessages(path,str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt",10))
+    #latencyAverage.append(messageStatsReport_latencyAverage(path,str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt",10))
+    #latencyMedian.append(messageStatsReport_latencyMedian(path,str(selfishLevel)+"/"+trace+"_trace_MessageStatsReport.txt",10))
 
     
     #EM RELAÇÃO A RECURSOS E EGOISMO
-    buffers.append(bufferOccupancy(path+str(selfishLevel)+"/"+trace+"_trace_BufferOccupancyReport.txt"))
-    hostTransferedMessages.append(transferMessagesReport(path+str(selfishLevel)+"/"+trace+"_trace_TransferMessagesReport.txt"))
+    #buffers.append(bufferOccupancy(path,str(selfishLevel)+"/"+trace+"_trace_BufferOccupancyReport.txt",0))
+    #hostTransferedMessages.append(transferMessagesReport(path+str(selfishLevel)+"/"+trace+"_trace_TransferMessagesReport.txt"))
 
     #INFORMACAO GERAL DA REDE
-    proportion.append(SelfishNodesProportion(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    normalEnergyConsume.append(normalConsumedEnergy(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    selfishEnergyConsume.append(selfishConsumedEnergy(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+    #proportion.append(SelfishNodesProportion(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+    #normalEnergyConsume.append(normalConsumedEnergy(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+    #selfishEnergyConsume.append(selfishConsumedEnergy(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
 
 
     #ESPECIFICO DE CADA NO
-    selfishNodes.append(getSelfishNodes(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    normalNodes.append(getNormalNodes(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    hostsConsume.append(getHostConsume(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
-    hostsDischarges.append(getHostsDischarges(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+    #hostsConsume.append(getHostConsume(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
+    #hostsDischarges.append(getHostsDischarges(path+str(selfishLevel)+"/"+trace+"_trace_SelfishReport.txt"))
 
     selfishLevel += 10
 
-selfishLevel = [0,10,20,30,40,50,60,70,80,90,100]
 
+globalBuffers = []
+for run in range(0,10):
+    for nivel in range(0,11):
+        globalBuffers.append( bufferOccupancy(path,str(nivel*10)+"/"+trace+"_trace_BufferOccupancyReport.txt",run))
+
+selfishNodes = getSelfishNodes(path,"/"+trace+"_trace_SelfishReport.txt",10)
+normalNodes = getNormalNodes(path,"/"+trace+"_trace_SelfishReport.txt",10)
+
+
+selfishLevel = [0,10,20,30,40,50,60,70,80,90,100]
 '''
+#plt.figure(figsize=(1.5748,2.16535))
 plt.plot(selfishLevel,deliveryRatePerSelfishLevel)
-plt.ylabel('Probabilidade de entrega')
-plt.xlabel('Nível de egoísmo')
+plt.ylabel('Probabilidade de entrega', fontsize=16)
+plt.xlabel('Nível de egoísmo',fontsize=16)
 plt.show()
 #print("Created messages: ",createdMessages)
 #print("Delivery Rate: ",deliveryRatePerSelfishLevel)
 
-
 plt.plot(selfishLevel,ropCountAvrPerSelfishLevel)
-plt.ylabel('Média da quantidade de saltos')
-plt.xlabel('Nível de egoísmo')
+plt.ylabel('Média da quantidade de saltos', fontsize=16)
+plt.xlabel('Nível de egoísmo', fontsize=16)
 plt.show()
 #print("rop count average: ",ropCountAvrPerSelfishLevel)
 
 
 plt.plot(selfishLevel,transferedMessages)
-plt.ylabel('Messagens transferidas')
-plt.xlabel('Nível de egoísmo')
+plt.ylabel('Messagens transferidas', fontsize=16)
+plt.xlabel('Nível de egoísmo', fontsize=16)
 plt.show()
 #print("Transfered messages: ",transferedMessages)
 
@@ -328,22 +369,23 @@ la = ax.plot(selfishLevel,latencyAverage,label="Media",marker="s")
 lm = ax.plot(selfishLevel,latencyMedian,label="Mediana",marker="^")
 #plt.legend([(la,lm)], ['Media','mediana'], numpoints=2)
 legend = ax.legend(loc='upper left', shadow=False, fontsize='medium')
-plt.ylabel('Tempo (segundos)')
-plt.xlabel('Nível de egoísmo')
+plt.ylabel('Tempo (segundos)', fontsize=16)
+plt.xlabel('Nível de egoísmo', fontsize=16)
 plt.show()
 
-'''
 
 
 
 #BUFFERS:
-marks = [".","^","2","s","p","*","h","+","|","_","1"]
-
 '''
 for b in range(0,len(buffersTimes)):
     buffersTimes[b] = int(buffersTimes[b][:-2])
+
+
+marks = [".","^","2","s","p","*","h","+","|","_","1"]
 #NORMAL HOSTS
 fig, ax = plt.subplots()
+
 for nivel in range(0,11):
     totalNormalBuffer = []
     totalSelfishBuffer = []
@@ -352,10 +394,11 @@ for nivel in range(0,11):
         totalSelfishBuffer.append(0)
     for tempo in range(0,len(buffersTimes)):
         for h in range(0,hosts):
-            if(selfishNodes[nivel].__contains__(str(h))):
-                totalSelfishBuffer[tempo] += buffers[nivel][h][tempo]
-            else:
-                totalNormalBuffer[tempo] += buffers[nivel][h][tempo]
+            for run in range(0,10):
+                if(selfishNodes[run][nivel].__contains__(str(h))):
+                    totalSelfishBuffer[tempo] += globalBuffers[nivel][h][tempo]/10
+                else:
+                    totalNormalBuffer[tempo] += globalBuffers[nivel][h][tempo]/10
     if(len(normalNodes) > 0):
         for i in range (0,len(totalNormalBuffer)):
             totalNormalBuffer[i] = totalNormalBuffer[i]/len(normalNodes)
@@ -363,10 +406,13 @@ for nivel in range(0,11):
         ax.plot(buffersTimes,totalNormalBuffer,label=str(nivel)+"0%",marker=marks[nivel])
     else:
         ax.plot(buffersTimes,totalNormalBuffer,label=str(nivel)+"%",marker=marks[nivel])
+
+print(totalNormalBuffer)
 legend = ax.legend(loc='upper left', shadow=False, fontsize='medium')
-plt.ylabel('Buffer usado (bytes)')
-plt.xlabel('Tempo de simulação')
+plt.ylabel('Buffer usado (bytes)', fontsize=16)
+plt.xlabel('Tempo de simulação', fontsize=16)
 plt.show()
+'''
 
 
 #SELFISH NODES
@@ -379,10 +425,11 @@ for nivel in range(0,11):
         totalSelfishBuffer.append(0)
     for tempo in range(0,len(buffersTimes)):
         for h in range(0,hosts):
-            if(selfishNodes[nivel].__contains__(str(h))):
-                totalSelfishBuffer[tempo] += buffers[nivel][h][tempo]
-            else:
-                totalNormalBuffer[tempo] += buffers[nivel][h][tempo]
+            for run in range(0,10):
+                if(selfishNodes[run][nivel].__contains__(str(h))):
+                    totalSelfishBuffer[tempo] += globalBuffers[nivel][h][tempo]/10
+                else:
+                    totalNormalBuffer[tempo] += globalBuffers[nivel][h][tempo]/10
     if(len(selfishNodes) > 0):
         for i in range (0,len(totalNormalBuffer)):
             totalSelfishBuffer[i] = totalSelfishBuffer[i]/len(selfishNodes)
@@ -391,11 +438,10 @@ for nivel in range(0,11):
     else:
         ax.plot(buffersTimes,totalSelfishBuffer,label=str(nivel)+"%",marker=marks[nivel])
 legend = ax.legend(loc='upper left', shadow=False, fontsize='medium')
-plt.ylabel('Buffer usado (bytes)')
-plt.xlabel('Tempo de simulação')
+plt.ylabel('Buffer usado (bytes)',fontsize=16)
+plt.xlabel('Tempo de simulação (segundos)',fontsize=16)
 plt.show()
 
-'''
 #Mean consume
 
 #0 mean energy consume
@@ -425,11 +471,10 @@ for nivel in range(0,len(selfishLevel)):
             totalSelfishEnergy[nivel] += float(hostsConsume[nivel][h][1])
         else:
             totalNormalEnergy[nivel] +=  float(hostsConsume[nivel][h][1])
-'''
+
 print(totalNormalEnergy)
 print(totalSelfishEnergy)
 
-'''
 media = 0
 loop = 0
 for i in range(0,len(meanNormalEnergy)):
@@ -445,8 +490,6 @@ for nd in normalEnergyConsume:
 
 for sd in selfishEnergyConsume:
     selfishDischarges.append(float(sd[2]))
-
-'''
 
 fig, ax = plt.subplots()
 ax.plot(selfishLevel,meanSelfishEnergy,label="Média do consumo egoísta",marker=marks[1])

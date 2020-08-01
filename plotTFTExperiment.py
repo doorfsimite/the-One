@@ -2,11 +2,6 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 
-path = "/home/simite/Documents/the-One/reports/PIBIC/ufam/multicast/multicast para 0.5%/"
-bubbleMessageStats= 'UFAM_BUBBLE_RAP_MultiCast_emauc_trace_MessageStatsReport.txt'
-bubbleDeliveryRate = []
-bubbleConsume = []
-
 pathTratado = "/home/simite/Documents/the-One/reports/PIBIC/ufam/tit-for-tat/comTratamentoDeBuffer/"
 pathSemTratamento = '/home/simite/Documents/the-One/reports/PIBIC/ufam/tit-for-tat/semTratamento/'
 
@@ -43,12 +38,6 @@ def getConsume(text):
 
 '''
 for i in range (0,11):
-    if(i == 5):
-        continue
-    bubbleMFile = open(path+str(i)+"/"+bubbleMessageStats)
-    bubbleMtext = bubbleMFile.readlines()
-    bubbleDeliveryRate.append(getMessagesStats(bubbleMtext))
-
 
     tratadoMFile = open(pathTratado+str(i*10)+"/"+tMessageStats)
     tratadoEFile = open(pathTratado+str(i*10)+"/"+tEnergy)
@@ -82,9 +71,6 @@ stcreated = []
     
 
 for i in range(0,10):
-    bstarted.append(bubbleDeliveryRate[i][2])
-    bdelivered.append(bubbleDeliveryRate[i][1])
-    bcreated.append(bubbleDeliveryRate[i][0])
 
     tstarted.append(tratadoDeliveryRate[i][2])
     tdelivered.append(tratadoDeliveryRate[i][1])
@@ -101,12 +87,11 @@ marks = [".","^","2","s","p","*","h","+","|","_","1"]
 
 
 fig, ax = plt.subplots()
-ax.plot(bcreated,bdelivered,label="Bubble Rap",marker=marks[1])
 ax.plot(tcreated,tdelivered,label="tit-for-tat",marker=marks[1])
 ax.plot(stcreated,stdelivered,label="sem tratamento",marker=marks[0])
 
-plt.xlabel('Mensagens criadas',fontsize=14)
-plt.ylabel('Mensagens entregues',fontsize=14)
+plt.xlabel('Mensagens criadas',fontsize=16)
+plt.ylabel('Mensagens entregues',fontsize=16)
 legend = ax.legend(loc='upper left', shadow=False, fontsize='small')
 plt.show()
 

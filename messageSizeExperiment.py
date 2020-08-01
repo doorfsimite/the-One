@@ -3,7 +3,7 @@ one = "./one.sh -b 1 "
 exit(0)
 #intel 5 - 50 mb
 #tem que executar mais vezes
-
+'''
 for reRun in range (0,3):
     path = "/home/simite/Documents/the-one-1.6.0/selfishSettings/intel/messageSizeExperiment/100MB/setting_trace_intel_"
     nivel = 0
@@ -73,3 +73,4 @@ for reRun in range (0,3):
         os.system(one+path+str(nivel)+".txt")
         nivel += 10
     os.system("cp -r /home/simite/Documents/the-one-1.6.0/reports/PIBIC/cambridge/messageSize/500MB /home/simite/Documents/the-one-1.6.0/reports/PIBIC/cambridge/messageSize/500MB"+str(reRun))
+'''
